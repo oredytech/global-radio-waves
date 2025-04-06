@@ -24,7 +24,7 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
     }
   };
   
-  const defaultImage = "https://placehold.co/100x100/ddd/888?text=Radio";
+  const defaultImage = "https://placehold.co/100x100/333/888?text=Radio";
   
   return (
     <div 
@@ -34,35 +34,38 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
       )}
       onClick={() => loadStation(station)}
     >
-      <div className="relative flex-1 bg-gray-100">
-        <img
-          src={station.favicon || defaultImage}
-          alt={station.name}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = defaultImage;
-          }}
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center transition-all duration-300">
+      <div className="relative flex-1 bg-black/50 shadow-md overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <img
+            src={station.favicon || defaultImage}
+            alt={station.name}
+            className="w-full h-full object-cover opacity-90 group-hover:opacity-60 transition-opacity duration-300"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = defaultImage;
+            }}
+          />
+        </div>
+        
+        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition-all duration-300">
           <Button
             className={cn(
-              "size-10 rounded-full p-0 opacity-0 group-hover:opacity-100",
-              isCurrentStation && isPlaying ? "bg-gowera-gold text-black" : "bg-white text-black"
+              "size-12 rounded-full p-0 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300",
+              isCurrentStation && isPlaying ? "bg-gowera-highlight text-black" : "bg-gowera-highlight text-black"
             )}
             onClick={handlePlayClick}
           >
             {isCurrentStation && isPlaying ? (
-              <Pause size={20} />
+              <Pause size={22} />
             ) : (
-              <Play size={20} className="ml-0.5" />
+              <Play size={22} className="ml-0.5" />
             )}
           </Button>
         </div>
       </div>
       
-      <div className="p-3">
-        <h3 className="font-medium text-sm truncate">{station.name}</h3>
-        <p className="text-xs text-gray-500 mt-1">{station.country}</p>
+      <div className="p-3 bg-gowera-surface">
+        <h3 className="font-medium text-sm truncate text-white">{station.name}</h3>
+        <p className="text-xs text-gray-400 mt-1">{station.country}</p>
       </div>
     </div>
   );

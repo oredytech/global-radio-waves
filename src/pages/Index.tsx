@@ -75,11 +75,11 @@ const Index = () => {
   }, [debouncedSearchQuery, selectedCountry, selectedCategory]);
   
   return (
-    <div className="min-h-screen flex flex-col pb-16">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background pb-24">
       <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       
       <main className="flex-1 container px-4 py-6 md:px-6">
-        <div className="mb-8">
+        <div className="mb-8 space-y-4">
           <CountryFilter 
             selectedCountry={selectedCountry}
             onSelectCountry={setSelectedCountry}
@@ -92,7 +92,7 @@ const Index = () => {
         </div>
         
         <div>
-          <h2 className="text-2xl font-bold mb-6">
+          <h2 className="text-2xl font-bold mb-6 text-white">
             {debouncedSearchQuery
               ? `Search results for "${debouncedSearchQuery}"`
               : selectedCountry
@@ -104,15 +104,15 @@ const Index = () => {
           
           {isLoading ? (
             <div className="flex justify-center items-center py-20">
-              <Loader2 className="h-10 w-10 animate-spin text-gowera-blue" />
+              <Loader2 className="h-10 w-10 animate-spin text-gowera-highlight" />
             </div>
           ) : stations.length === 0 ? (
             <div className="text-center py-20">
-              <h3 className="text-xl font-medium text-gray-500">No stations found</h3>
+              <h3 className="text-xl font-medium text-gray-300">No stations found</h3>
               <p className="mt-2 text-gray-400">Try changing your filters or search query</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
               {stations.map((station) => (
                 <RadioCard key={station.id} station={station} />
               ))}

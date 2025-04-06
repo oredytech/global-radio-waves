@@ -69,8 +69,11 @@ export default {
 					red: '#B91C1C',
 					lightblue: '#3B82F6',
 					darkblue: '#1E40AF',
-					background: '#F9FAFB',
-					surface: '#FFFFFF'
+					background: '#121212', // Spotify-like dark background
+					surface: '#181818', // Spotify-like card background
+					highlight: '#1DB954', // Spotify green
+					text: '#FFFFFF',
+					subtext: '#B3B3B3'
 				}
 			},
 			borderRadius: {
