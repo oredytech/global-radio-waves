@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from "react";
+import { useSwipeable } from "react-swipeable";
 import Header from "@/components/Header";
 import RadioPlayer from "@/components/RadioPlayer";
 import RadioCard from "@/components/RadioCard";
@@ -14,7 +15,16 @@ import {
   searchStations 
 } from "@/services/radioService";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronRight } from "lucide-react";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [stations, setStations] = useState<RadioStation[]>([]);
@@ -22,9 +32,17 @@ const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   
+  const isMobile = useIsMobile();
   const { currentStation } = useAudioPlayer();
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  
+  // Setup swipe handlers
+  const swipeHandlers = useSwipeable({
+    onSwipedRight: () => setDrawerOpen(true),
+    trackMouse: false
+  });
   
   // Fetch stations based on filters
   useEffect(() => {
@@ -75,10 +93,14 @@ const Index = () => {
   }, [debouncedSearchQuery, selectedCountry, selectedCategory]);
   
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background pb-24">
+    <div 
+      className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background pb-24"
+      {...swipeHandlers}
+    >
       <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       
       <main className="flex-1 container px-4 py-6 md:px-6">
+        {/* Visible filters */}
         <div className="mb-8 space-y-4">
           <CountryFilter 
             selectedCountry={selectedCountry}
@@ -121,6 +143,56 @@ const Index = () => {
         </div>
       </main>
       
+      {/* Slide-in drawer for additional options */}
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DrawerContent className="h-[85%]">
+          <DrawerHeader className="border-b border-white/10">
+            <DrawerTitle className="text-white">Menu supplémentaire</DrawerTitle>
+            <DrawerClose className="absolute right-4 top-4" />
+          </DrawerHeader>
+          <ScrollArea className="h-full p-6">
+            <div className="space-y-6">
+              <div className="bg-gowera-surface p-4 rounded-lg">
+                <h3 className="font-bold text-white mb-4">Découvrez par genre</h3>
+                <ul className="space-y-3">
+                  {['Pop', 'Rock', 'Jazz', 'Hip Hop', 'Classical', 'Electronic', 'Reggae', 'Blues', 'Folk'].map((genre) => (
+                    <li key={genre} className="text-gray-300 hover:text-gowera-highlight cursor-pointer transition-colors flex items-center">
+                      <ChevronRight size={16} className="mr-2" />
+                      {genre}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="bg-gowera-surface p-4 rounded-lg">
+                <h3 className="font-bold text-white mb-4">Radios tendances</h3>
+                <ul className="space-y-3">
+                  {['Radio Okapi', 'Radio France', 'BBC World Service', 'Voice of America', 'RFI Afrique'].map((station) => (
+                    <li key={station} className="text-gray-300 hover:text-gowera-highlight cursor-pointer transition-colors flex items-center">
+                      <ChevronRight size={16} className="mr-2" />
+                      {station}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="bg-gowera-surface p-4 rounded-lg">
+                <h3 className="font-bold text-white mb-4">Continents</h3>
+                <ul className="space-y-3">
+                  {['Africa', 'Europe', 'North America', 'South America', 'Asia', 'Oceania'].map((continent) => (
+                    <li key={continent} className="text-gray-300 hover:text-gowera-highlight cursor-pointer transition-colors flex items-center">
+                      <ChevronRight size={16} className="mr-2" />
+                      {continent}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </ScrollArea>
+        </DrawerContent>
+      </Drawer>
+      
+      {/* Show player when a station is selected */}
       {currentStation && <RadioPlayer />}
     </div>
   );

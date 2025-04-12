@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Play, Pause } from "lucide-react";
 import { RadioStation } from "@/services/radioService";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
@@ -12,6 +12,7 @@ interface RadioCardProps {
 
 const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
   const { loadStation, currentStation, isPlaying, togglePlayPause } = useAudioPlayer();
+  const [imageError, setImageError] = useState(false);
   
   const isCurrentStation = currentStation?.id === station.id;
   
@@ -26,6 +27,9 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
   
   const defaultImage = "https://placehold.co/100x100/333/888?text=Radio";
   
+  // Improved image handling with fallback
+  const stationImage = imageError || !station.favicon ? defaultImage : station.favicon;
+  
   return (
     <div 
       className={cn(
@@ -37,12 +41,11 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
       <div className="relative flex-1 bg-black/50 shadow-md overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center">
           <img
-            src={station.favicon || defaultImage}
+            src={stationImage}
             alt={station.name}
             className="w-full h-full object-cover opacity-90 group-hover:opacity-60 transition-opacity duration-300"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = defaultImage;
-            }}
+            onError={() => setImageError(true)}
+            loading="lazy"
           />
         </div>
         
