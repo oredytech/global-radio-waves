@@ -1,7 +1,7 @@
 
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Newspaper, Globe, Music, Mail, Info } from "lucide-react";
+import { Home, Newspaper, Globe, Music, Mail, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const NavBar: React.FC = () => {
@@ -15,6 +15,21 @@ const NavBar: React.FC = () => {
                 to="/" 
                 className={({ isActive }) => `flex flex-col items-center justify-center ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
                 end
+              >
+                <Home size={20} className="mb-1" />
+                <span className="text-xs hidden md:block">Accueil</span>
+              </NavLink>
+            </TooltipTrigger>
+            <TooltipContent className="md:hidden">
+              <p>Accueil</p>
+            </TooltipContent>
+          </Tooltip>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <NavLink 
+                to="/news" 
+                className={({ isActive }) => `flex flex-col items-center justify-center ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
               >
                 <Newspaper size={20} className="mb-1" />
                 <span className="text-xs hidden md:block">Actualités</span>

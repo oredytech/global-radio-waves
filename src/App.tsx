@@ -11,6 +11,7 @@ import Countries from "./pages/Countries";
 import Categories from "./pages/Categories";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import Index from "./pages/Index";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,7 +30,8 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<News />} />
+            <Route path="/" element={<Index />} />
+            <Route path="/news" element={<News />} />
             <Route path="/countries" element={<Countries />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/contact" element={<Contact />} />
