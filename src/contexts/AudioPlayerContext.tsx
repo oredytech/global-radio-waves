@@ -15,7 +15,7 @@ interface AudioPlayerContextType {
 
 const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(undefined);
 
-export function AudioPlayerProvider({ children }: { children: React.ReactNode }) {
+export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const [currentStation, setCurrentStation] = useState<RadioStation | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolumeState] = useState(0.7);
@@ -123,7 +123,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       {children}
     </AudioPlayerContext.Provider>
   );
-}
+};
 
 // Custom hook for using the audio player context
 export function useAudioPlayer() {
