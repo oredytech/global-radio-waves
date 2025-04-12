@@ -1,7 +1,7 @@
 
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Radio, Globe, Music, Mail } from "lucide-react";
+import { Newspaper, Globe, Music, Mail } from "lucide-react";
 
 const NavBar: React.FC = () => {
   return (
@@ -12,7 +12,7 @@ const NavBar: React.FC = () => {
           className={({ isActive }) => `flex flex-col items-center justify-center text-xs ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
           end
         >
-          <Radio size={20} className="mb-1" />
+          <Newspaper size={20} className="mb-1" />
           <span>Actualités</span>
         </NavLink>
         
