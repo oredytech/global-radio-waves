@@ -1,19 +1,16 @@
+
 import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import RadioPlayer from "@/components/RadioPlayer";
 import RadioCard from "@/components/RadioCard";
-import CountryFilter from "@/components/CountryFilter";
-import CategoryFilter from "@/components/CategoryFilter";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { 
   RadioStation, 
   fetchTopStations, 
-  fetchStationsByCountry, 
-  fetchStationsByTag, 
   searchStations 
 } from "@/services/radioService";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Loader2, ChevronRight } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import {
   Drawer,
   DrawerClose,
@@ -23,11 +20,10 @@ import {
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ChevronRight } from "lucide-react";
 
 const Index = () => {
   const [stations, setStations] = useState<RadioStation[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -44,22 +40,8 @@ const Index = () => {
       try {
         if (debouncedSearchQuery) {
           result = await searchStations(debouncedSearchQuery);
-        } else if (selectedCountry) {
-          result = await fetchStationsByCountry(selectedCountry);
-        } else if (selectedCategory) {
-          result = await fetchStationsByTag(selectedCategory);
         } else {
           result = await fetchTopStations(50);
-          
-          const congoStations = await fetchStationsByCountry("Congo", 10);
-          const drcStations = await fetchStationsByCountry("Democratic Republic of the Congo", 10);
-          
-          if (congoStations.length > 0 || drcStations.length > 0) {
-            result = [...congoStations, ...drcStations, ...result];
-            result = result.filter((station, index, self) => 
-              index === self.findIndex((s) => s.id === station.id)
-            );
-          }
         }
         
         setStations(result);
@@ -71,7 +53,7 @@ const Index = () => {
     };
     
     fetchStations();
-  }, [debouncedSearchQuery, selectedCountry, selectedCategory]);
+  }, [debouncedSearchQuery]);
   
   const handleMenuClick = () => {
     setDrawerOpen(true);
@@ -86,26 +68,10 @@ const Index = () => {
       />
       
       <main className="flex-1 container px-4 py-6 md:px-6">
-        <div className="mb-8 space-y-4">
-          <CountryFilter 
-            selectedCountry={selectedCountry}
-            onSelectCountry={setSelectedCountry}
-          />
-          
-          <CategoryFilter 
-            selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
-          />
-        </div>
-        
         <div>
           <h2 className="text-2xl font-bold mb-6 text-white">
             {debouncedSearchQuery
               ? `Search results for "${debouncedSearchQuery}"`
-              : selectedCountry
-              ? `Radio stations in ${selectedCountry}`
-              : selectedCategory
-              ? `${selectedCategory} radio stations`
               : "Popular radio stations"}
           </h2>
           
@@ -116,7 +82,7 @@ const Index = () => {
           ) : stations.length === 0 ? (
             <div className="text-center py-20">
               <h3 className="text-xl font-medium text-gray-300">No stations found</h3>
-              <p className="mt-2 text-gray-400">Try changing your filters or search query</p>
+              <p className="mt-2 text-gray-400">Try changing your search query</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">

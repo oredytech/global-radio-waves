@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Header from "@/components/Header";
 import RadioPlayer from "@/components/RadioPlayer";
@@ -13,12 +12,12 @@ const Countries: React.FC = () => {
   const [stations, setStations] = useState<RadioStation[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [countries, setCountries] = useState<CountryInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   
   const { currentStation } = useAudioPlayer();
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   
-  // Load stations when country is selected
   React.useEffect(() => {
     const fetchStations = async () => {
       if (!selectedCountry) return;
@@ -37,7 +36,10 @@ const Countries: React.FC = () => {
     fetchStations();
   }, [selectedCountry]);
 
-  // Filter stations by search query
+  const handleMenuClick = () => {
+    console.log("Menu clicked from Countries page");
+  };
+
   const filteredStations = debouncedSearchQuery
     ? stations.filter(station => 
         station.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
@@ -45,8 +47,12 @@ const Countries: React.FC = () => {
     : stations;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background pb-24">
-      <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background">
+      <Header 
+        searchQuery={searchQuery} 
+        setSearchQuery={setSearchQuery} 
+        onMenuClick={handleMenuClick}
+      />
       
       <main className="flex-1 container px-4 py-6 md:px-6">
         <div className="mb-8">

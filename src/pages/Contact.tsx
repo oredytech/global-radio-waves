@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Header from "@/components/Header";
 import RadioPlayer from "@/components/RadioPlayer";
@@ -14,8 +13,18 @@ const Contact: React.FC = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   
   const { currentStation } = useAudioPlayer();
+  
+  const handleSearch = () => {
+    // Search functionality if needed
+  };
+
+  const handleMenuClick = () => {
+    // Menu handling can be implemented here if needed
+    console.log("Menu clicked from Contact page");
+  };
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,8 +41,12 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background pb-24">
-      <Header searchQuery="" setSearchQuery={() => {}} />
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background">
+      <Header 
+        searchQuery={searchQuery}
+        setSearchQuery={() => handleSearch()}
+        onMenuClick={handleMenuClick}
+      />
       
       <main className="flex-1 container px-4 py-6 md:px-6">
         <div className="max-w-lg mx-auto">
