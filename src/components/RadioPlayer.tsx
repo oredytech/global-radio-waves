@@ -23,7 +23,7 @@ const RadioPlayer: React.FC = () => {
   const isMuted = volume === 0;
 
   return (
-    <div className="player-container py-3 px-4">
+    <div className="player-container px-4 py-3">
       <div className="container mx-auto">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4 w-1/3">
@@ -41,27 +41,22 @@ const RadioPlayer: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex flex-col items-center w-1/3">
-            <div className="flex items-center">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="rounded-full hover:bg-white/10 text-white"
-                onClick={togglePlayPause}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <Loader2 className="h-8 w-8 animate-spin" />
-                ) : isPlaying ? (
-                  <Pause className="h-8 w-8" />
-                ) : (
-                  <Play className="h-8 w-8 ml-0.5" />
-                )}
-              </Button>
-            </div>
-            <span className="text-xs text-gray-400 mt-1">
-              {isLoading ? "Loading..." : isPlaying ? "Now playing" : "Paused"}
-            </span>
+          <div className="flex items-center w-1/3 justify-center">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="rounded-full hover:bg-white/10 text-white"
+              onClick={togglePlayPause}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="h-8 w-8 animate-spin" />
+              ) : isPlaying ? (
+                <Pause className="h-8 w-8" />
+              ) : (
+                <Play className="h-8 w-8 ml-0.5" />
+              )}
+            </Button>
           </div>
           
           <div className="flex items-center space-x-2 w-1/3 justify-end">
