@@ -1,6 +1,4 @@
-
 import React, { useState, useEffect } from "react";
-import { useSwipeable } from "react-swipeable";
 import Header from "@/components/Header";
 import RadioPlayer from "@/components/RadioPlayer";
 import RadioCard from "@/components/RadioCard";
@@ -38,43 +36,26 @@ const Index = () => {
   const { currentStation } = useAudioPlayer();
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   
-  // Setup swipe handlers
-  const swipeHandlers = useSwipeable({
-    onSwipedRight: () => setDrawerOpen(true),
-    trackMouse: false
-  });
-  
-  // Fetch stations based on filters
   useEffect(() => {
     const fetchStations = async () => {
       setIsLoading(true);
       let result: RadioStation[] = [];
       
       try {
-        // Search query takes precedence over filters
         if (debouncedSearchQuery) {
           result = await searchStations(debouncedSearchQuery);
-        }
-        // Then filter by country
-        else if (selectedCountry) {
+        } else if (selectedCountry) {
           result = await fetchStationsByCountry(selectedCountry);
-        }
-        // Then filter by category
-        else if (selectedCategory) {
+        } else if (selectedCategory) {
           result = await fetchStationsByTag(selectedCategory);
-        }
-        // Default to top stations
-        else {
+        } else {
           result = await fetchTopStations(50);
           
-          // Try to prioritize Congo and DRC stations
           const congoStations = await fetchStationsByCountry("Congo", 10);
           const drcStations = await fetchStationsByCountry("Democratic Republic of the Congo", 10);
           
-          // Add Congo and DRC stations to the beginning if they exist
           if (congoStations.length > 0 || drcStations.length > 0) {
             result = [...congoStations, ...drcStations, ...result];
-            // Remove duplicates
             result = result.filter((station, index, self) => 
               index === self.findIndex((s) => s.id === station.id)
             );
@@ -92,15 +73,19 @@ const Index = () => {
     fetchStations();
   }, [debouncedSearchQuery, selectedCountry, selectedCategory]);
   
+  const handleMenuClick = () => {
+    setDrawerOpen(true);
+  };
+  
   return (
-    <div 
-      className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background pb-24"
-      {...swipeHandlers}
-    >
-      <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background pb-24">
+      <Header 
+        searchQuery={searchQuery} 
+        setSearchQuery={setSearchQuery} 
+        onMenuClick={handleMenuClick}
+      />
       
       <main className="flex-1 container px-4 py-6 md:px-6">
-        {/* Visible filters */}
         <div className="mb-8 space-y-4">
           <CountryFilter 
             selectedCountry={selectedCountry}
@@ -143,7 +128,6 @@ const Index = () => {
         </div>
       </main>
       
-      {/* Slide-in drawer for additional options */}
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
         <DrawerContent className="h-[85%]">
           <DrawerHeader className="border-b border-white/10">
@@ -192,7 +176,6 @@ const Index = () => {
         </DrawerContent>
       </Drawer>
       
-      {/* Show player when a station is selected */}
       {currentStation && <RadioPlayer />}
     </div>
   );
