@@ -7,10 +7,11 @@ import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { 
   RadioStation, 
   fetchTopStations, 
-  searchStations 
+  searchStations,
+  fetchAfricanStations
 } from "@/services/radioService";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Loader2 } from "lucide-react";
+import { Loader2, Globe } from "lucide-react";
 import {
   Drawer,
   DrawerClose,
@@ -21,12 +22,16 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ChevronRight } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
   const [stations, setStations] = useState<RadioStation[]>([]);
+  const [africanStations, setAfricanStations] = useState<RadioStation[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingAfrican, setIsLoadingAfrican] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("popular");
   
   const isMobile = useIsMobile();
   const { currentStation } = useAudioPlayer();
@@ -55,6 +60,25 @@ const Index = () => {
     fetchStations();
   }, [debouncedSearchQuery]);
   
+  // Fetch African stations when the African tab is selected
+  useEffect(() => {
+    if (activeTab === "africa") {
+      const fetchAfrican = async () => {
+        setIsLoadingAfrican(true);
+        try {
+          const result = await fetchAfricanStations(50);
+          setAfricanStations(result);
+        } catch (error) {
+          console.error("Error fetching African stations:", error);
+        } finally {
+          setIsLoadingAfrican(false);
+        }
+      };
+      
+      fetchAfrican();
+    }
+  }, [activeTab]);
+  
   const handleMenuClick = () => {
     setDrawerOpen(true);
   };
@@ -68,30 +92,61 @@ const Index = () => {
       />
       
       <main className="flex-1 container px-4 py-6 md:px-6">
-        <div>
-          <h2 className="text-2xl font-bold mb-6 text-white">
-            {debouncedSearchQuery
-              ? `Search results for "${debouncedSearchQuery}"`
-              : "Popular radio stations"}
-          </h2>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
+          <TabsList className="grid w-full grid-cols-2 sm:w-[400px]">
+            <TabsTrigger value="popular">Stations populaires</TabsTrigger>
+            <TabsTrigger value="africa">Afrique</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="popular">
+            <h2 className="text-2xl font-bold mb-6 text-white">
+              {debouncedSearchQuery
+                ? `Résultats pour "${debouncedSearchQuery}"`
+                : "Stations de radio populaires"}
+            </h2>
+            
+            {isLoading ? (
+              <div className="flex justify-center items-center py-20">
+                <Loader2 className="h-10 w-10 animate-spin text-gowera-highlight" />
+              </div>
+            ) : stations.length === 0 ? (
+              <div className="text-center py-20">
+                <h3 className="text-xl font-medium text-gray-300">Aucune station trouvée</h3>
+                <p className="mt-2 text-gray-400">Essayez de modifier votre recherche</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+                {stations.map((station) => (
+                  <RadioCard key={station.id} station={station} />
+                ))}
+              </div>
+            )}
+          </TabsContent>
           
-          {isLoading ? (
-            <div className="flex justify-center items-center py-20">
-              <Loader2 className="h-10 w-10 animate-spin text-gowera-highlight" />
+          <TabsContent value="africa">
+            <div className="flex items-center gap-2 mb-6">
+              <Globe className="text-gowera-highlight" />
+              <h2 className="text-2xl font-bold text-white">Radios africaines</h2>
             </div>
-          ) : stations.length === 0 ? (
-            <div className="text-center py-20">
-              <h3 className="text-xl font-medium text-gray-300">No stations found</h3>
-              <p className="mt-2 text-gray-400">Try changing your search query</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-              {stations.map((station) => (
-                <RadioCard key={station.id} station={station} />
-              ))}
-            </div>
-          )}
-        </div>
+            
+            {isLoadingAfrican ? (
+              <div className="flex justify-center items-center py-20">
+                <Loader2 className="h-10 w-10 animate-spin text-gowera-highlight" />
+              </div>
+            ) : africanStations.length === 0 ? (
+              <div className="text-center py-20">
+                <h3 className="text-xl font-medium text-gray-300">Aucune station africaine trouvée</h3>
+                <p className="mt-2 text-gray-400">Essayez plus tard ou vérifiez votre connexion</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+                {africanStations.map((station) => (
+                  <RadioCard key={station.id} station={station} />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </main>
       
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
@@ -103,12 +158,21 @@ const Index = () => {
           <ScrollArea className="h-full p-6">
             <div className="space-y-6">
               <div className="bg-gowera-surface p-4 rounded-lg">
-                <h3 className="font-bold text-white mb-4">Découvrez par genre</h3>
+                <h3 className="font-bold text-white mb-4">Découvrez par continent</h3>
                 <ul className="space-y-3">
-                  {['Pop', 'Rock', 'Jazz', 'Hip Hop', 'Classical', 'Electronic', 'Reggae', 'Blues', 'Folk'].map((genre) => (
-                    <li key={genre} className="text-gray-300 hover:text-gowera-highlight cursor-pointer transition-colors flex items-center">
+                  {['Afrique', 'Europe', 'Amérique du Nord', 'Amérique du Sud', 'Asie', 'Océanie'].map((continent) => (
+                    <li 
+                      key={continent} 
+                      className={`text-gray-300 hover:text-gowera-highlight cursor-pointer transition-colors flex items-center ${continent === 'Afrique' && 'text-gowera-highlight font-medium'}`}
+                      onClick={() => {
+                        if (continent === 'Afrique') {
+                          setActiveTab('africa');
+                          setDrawerOpen(false);
+                        }
+                      }}
+                    >
                       <ChevronRight size={16} className="mr-2" />
-                      {genre}
+                      {continent}
                     </li>
                   ))}
                 </ul>
