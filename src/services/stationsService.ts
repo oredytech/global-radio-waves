@@ -107,3 +107,56 @@ export const fetchAfricanStations = async (limit: number = 100): Promise<RadioSt
     );
   }
 };
+
+const CONTINENT_COUNTRIES = {
+  Africa: AFRICAN_COUNTRIES,
+  Europe: ["Germany", "France", "United Kingdom", "Italy", "Spain", "Netherlands", "Poland", "Switzerland", "Belgium", "Sweden"],
+  "North America": ["United States", "Canada", "Mexico", "Cuba", "Dominican Republic", "Costa Rica", "Panama"],
+  "South America": ["Brazil", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Bolivia", "Uruguay"],
+  Asia: ["Japan", "China", "India", "South Korea", "Thailand", "Indonesia", "Philippines", "Malaysia", "Singapore", "Vietnam"],
+  Oceania: ["Australia", "New Zealand", "Fiji", "Papua New Guinea", "Solomon Islands", "Vanuatu"]
+};
+
+export const fetchStationsByContinent = async (continent: string, limit: number = 100): Promise<RadioStation[]> => {
+  if (continent === "Africa") {
+    return fetchAfricanStations(limit);
+  }
+  
+  try {
+    let allStations: RadioStation[] = [];
+    const countriesForContinent = CONTINENT_COUNTRIES[continent as keyof typeof CONTINENT_COUNTRIES] || [];
+    
+    if (countriesForContinent.length === 0) {
+      console.warn(`No countries defined for continent: ${continent}`);
+      return FALLBACK_STATIONS.filter(s => s.country.includes(continent));
+    }
+    
+    const majorCountries = countriesForContinent.slice(0, 5); // Use top 5 countries
+    
+    for (const country of majorCountries) {
+      try {
+        const countryStations = await fetchFromMultipleEndpoints(`/stations/bycountry/${country}?limit=${Math.ceil(limit / majorCountries.length)}&hidebroken=true`);
+        if (countryStations && countryStations.length > 0) {
+          allStations = [...allStations, ...countryStations];
+        }
+      } catch (error) {
+        console.warn(`Error fetching stations for ${country}`, error);
+      }
+    }
+    
+    if (allStations.length > 0) {
+      return allStations.slice(0, limit);
+    }
+    
+    return FALLBACK_STATIONS.filter(s => 
+      countriesForContinent.some(country => s.country.includes(country))
+    );
+  } catch (error) {
+    console.warn(`Using fallback ${continent} stations due to API error`, error);
+    return FALLBACK_STATIONS.filter(s => 
+      CONTINENT_COUNTRIES[continent as keyof typeof CONTINENT_COUNTRIES]?.some(country => 
+        s.country.includes(country)
+      )
+    );
+  }
+};

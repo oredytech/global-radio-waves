@@ -8,7 +8,8 @@ import {
   RadioStation, 
   fetchTopStations, 
   searchStations,
-  fetchAfricanStations
+  fetchAfricanStations,
+  fetchStationsByContinent
 } from "@/services/radioService";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Loader2, Globe } from "lucide-react";
@@ -27,15 +28,28 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const Index = () => {
   const [stations, setStations] = useState<RadioStation[]>([]);
   const [africanStations, setAfricanStations] = useState<RadioStation[]>([]);
+  const [continentStations, setContinentStations] = useState<RadioStation[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingAfrican, setIsLoadingAfrican] = useState(false);
+  const [isLoadingContinent, setIsLoadingContinent] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("popular");
+  const [selectedContinent, setSelectedContinent] = useState<string | null>(null);
   
   const isMobile = useIsMobile();
   const { currentStation } = useAudioPlayer();
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  
+  const continents = ['Afrique', 'Europe', 'Amérique du Nord', 'Amérique du Sud', 'Asie', 'Océanie'];
+  const continentMapping: Record<string, string> = {
+    'Afrique': 'Africa',
+    'Europe': 'Europe',
+    'Amérique du Nord': 'North America',
+    'Amérique du Sud': 'South America',
+    'Asie': 'Asia',
+    'Océanie': 'Oceania'
+  };
   
   useEffect(() => {
     const fetchStations = async () => {
@@ -79,8 +93,34 @@ const Index = () => {
     }
   }, [activeTab]);
   
+  // Fetch stations by continent when a continent is selected
+  useEffect(() => {
+    if (selectedContinent && activeTab === "continent") {
+      const fetchContinentStations = async () => {
+        setIsLoadingContinent(true);
+        try {
+          const englishName = continentMapping[selectedContinent] || selectedContinent;
+          const result = await fetchStationsByContinent(englishName, 50);
+          setContinentStations(result);
+        } catch (error) {
+          console.error(`Error fetching stations for ${selectedContinent}:`, error);
+        } finally {
+          setIsLoadingContinent(false);
+        }
+      };
+      
+      fetchContinentStations();
+    }
+  }, [selectedContinent, activeTab]);
+  
   const handleMenuClick = () => {
     setDrawerOpen(true);
+  };
+  
+  const handleContinentClick = (continent: string) => {
+    setSelectedContinent(continent);
+    setActiveTab("continent");
+    setDrawerOpen(false);
   };
   
   return (
@@ -146,6 +186,32 @@ const Index = () => {
               </div>
             )}
           </TabsContent>
+          
+          <TabsContent value="continent">
+            {selectedContinent && (
+              <div className="flex items-center gap-2 mb-6">
+                <Globe className="text-gowera-highlight" />
+                <h2 className="text-2xl font-bold text-white">Radios - {selectedContinent}</h2>
+              </div>
+            )}
+            
+            {isLoadingContinent ? (
+              <div className="flex justify-center items-center py-20">
+                <Loader2 className="h-10 w-10 animate-spin text-gowera-highlight" />
+              </div>
+            ) : continentStations.length === 0 ? (
+              <div className="text-center py-20">
+                <h3 className="text-xl font-medium text-gray-300">Aucune station trouvée</h3>
+                <p className="mt-2 text-gray-400">Essayez plus tard ou vérifiez votre connexion</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+                {continentStations.map((station) => (
+                  <RadioCard key={station.id} station={station} />
+                ))}
+              </div>
+            )}
+          </TabsContent>
         </Tabs>
       </main>
       
@@ -160,16 +226,11 @@ const Index = () => {
               <div className="bg-gowera-surface p-4 rounded-lg">
                 <h3 className="font-bold text-white mb-4">Découvrez par continent</h3>
                 <ul className="space-y-3">
-                  {['Afrique', 'Europe', 'Amérique du Nord', 'Amérique du Sud', 'Asie', 'Océanie'].map((continent) => (
+                  {continents.map((continent) => (
                     <li 
                       key={continent} 
-                      className={`text-gray-300 hover:text-gowera-highlight cursor-pointer transition-colors flex items-center ${continent === 'Afrique' && 'text-gowera-highlight font-medium'}`}
-                      onClick={() => {
-                        if (continent === 'Afrique') {
-                          setActiveTab('africa');
-                          setDrawerOpen(false);
-                        }
-                      }}
+                      className={`text-gray-300 hover:text-gowera-highlight cursor-pointer transition-colors flex items-center ${continent === selectedContinent ? 'text-gowera-highlight font-medium' : ''}`}
+                      onClick={() => handleContinentClick(continent)}
                     >
                       <ChevronRight size={16} className="mr-2" />
                       {continent}
@@ -185,18 +246,6 @@ const Index = () => {
                     <li key={station} className="text-gray-300 hover:text-gowera-highlight cursor-pointer transition-colors flex items-center">
                       <ChevronRight size={16} className="mr-2" />
                       {station}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="bg-gowera-surface p-4 rounded-lg">
-                <h3 className="font-bold text-white mb-4">Continents</h3>
-                <ul className="space-y-3">
-                  {['Africa', 'Europe', 'North America', 'South America', 'Asia', 'Oceania'].map((continent) => (
-                    <li key={continent} className="text-gray-300 hover:text-gowera-highlight cursor-pointer transition-colors flex items-center">
-                      <ChevronRight size={16} className="mr-2" />
-                      {continent}
                     </li>
                   ))}
                 </ul>
