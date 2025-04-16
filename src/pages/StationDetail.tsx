@@ -1,29 +1,37 @@
-
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchAllArticles, WordPressArticle } from "@/services/newsService";
+import { fetchAllArticles } from "@/services/newsService";
 import { RadioStation } from "@/services/radioService";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
-import { Play, Pause, ArrowLeft, Calendar, Clock } from "lucide-react";
+import { Play, Pause, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import ArticleCard from "@/components/ArticleCard";
-import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { toast } from "sonner";
+
+const generateSlug = (name: string) => {
+  return name
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-');
+};
+
+const findStationBySlug = (stations: RadioStation[], slug: string): RadioStation | undefined => {
+  return stations.find(s => generateSlug(s.name) === slug);
+};
 
 const StationDetail: React.FC = () => {
   const { stationId } = useParams<{ stationId: string }>();
   const { currentStation, isPlaying, togglePlayPause, loadStation } = useAudioPlayer();
   const [station, setStation] = useState<RadioStation | null>(null);
+  const navigate = useNavigate();
   
-  // Récupérer les actualités
   const { data: articles } = useQuery({
     queryKey: ['news'],
     queryFn: () => fetchAllArticles(10),
   });
   
-  // Filtrer pour obtenir uniquement les articles récents (24 heures)
   const recentArticles = articles?.filter(article => {
     const articleDate = new Date(article.date);
     const oneDayAgo = new Date();
@@ -31,31 +39,41 @@ const StationDetail: React.FC = () => {
     return articleDate >= oneDayAgo;
   }).slice(0, 4) || [];
   
-  // Charger la station depuis le localStorage si c'est la station courante
   useEffect(() => {
-    if (currentStation && currentStation.id === stationId) {
+    if (!stationId) {
+      navigate('/');
+      return;
+    }
+    
+    if (currentStation && generateSlug(currentStation.name) === stationId) {
       setStation(currentStation);
       return;
     }
     
-    // Essayer de récupérer depuis le localStorage
     try {
       const savedStations = localStorage.getItem('allRadioStations');
       if (savedStations) {
         const stations = JSON.parse(savedStations) as RadioStation[];
-        const foundStation = stations.find(s => s.id === stationId);
+        const foundStation = findStationBySlug(stations, stationId);
+        
         if (foundStation) {
           setStation(foundStation);
+        } else {
+          toast.info("Station information is being loaded...");
         }
       }
     } catch (error) {
-      console.error("Erreur lors de la récupération de la station:", error);
+      console.error("Error retrieving station:", error);
     }
-  }, [stationId, currentStation]);
+  }, [stationId, currentStation, navigate]);
   
   if (!station) {
     return (
       <div className="container mx-auto px-4 py-20">
+        <Link to="/" className="flex items-center text-gowera-highlight mb-4 hover:underline">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Return to home
+        </Link>
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gowera-highlight"></div>
         </div>
@@ -82,7 +100,6 @@ const StationDetail: React.FC = () => {
         Retour à l'accueil
       </Link>
       
-      {/* Bannière de la radio */}
       <div className="relative w-full h-48 md:h-64 rounded-lg overflow-hidden mb-6 bg-gowera-surface">
         <div 
           className="absolute inset-0 w-full h-full bg-cover bg-center opacity-40"
@@ -105,7 +122,6 @@ const StationDetail: React.FC = () => {
         </div>
       </div>
       
-      {/* Profil de la radio */}
       <div className="bg-gowera-surface p-6 rounded-lg shadow-lg mb-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
           <h1 className="text-2xl font-bold mb-2 md:mb-0">{station.name}</h1>
@@ -155,13 +171,11 @@ const StationDetail: React.FC = () => {
         </div>
       </div>
       
-      {/* Actualités récentes */}
       <div className="mb-20">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold">Actualités récentes</h2>
           <div className="flex items-center text-sm text-gray-400">
-            <Clock size={14} className="mr-1" /> 
-            Dernières 24 heures
+            <span>Dernières 24 heures</span>
           </div>
         </div>
         

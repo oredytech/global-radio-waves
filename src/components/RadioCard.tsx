@@ -5,7 +5,7 @@ import { RadioStation } from "@/services/radioService";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface RadioCardProps {
   station: RadioStation;
@@ -14,17 +14,33 @@ interface RadioCardProps {
 const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
   const { loadStation, currentStation, isPlaying, togglePlayPause } = useAudioPlayer();
   const [imageError, setImageError] = useState(false);
+  const navigate = useNavigate();
   
   const isCurrentStation = currentStation?.id === station.id;
+  
+  // Generate a slug from station name
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-');
+  };
+  
+  const stationSlug = generateSlug(station.name);
   
   const handlePlayClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
+    
+    // First load/toggle the station
     if (isCurrentStation) {
       togglePlayPause();
     } else {
       loadStation(station);
     }
+    
+    // Then navigate to the station page
+    navigate(`/station/${stationSlug}`);
   };
   
   const defaultImage = "https://placehold.co/100x100/333/888?text=Radio";
@@ -34,7 +50,7 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
   
   return (
     <Link
-      to={`/station/${station.id}`}
+      to={`/station/${stationSlug}`}
       className={cn(
         "radio-card flex flex-col h-48 cursor-pointer transition-all duration-300 group",
         isCurrentStation && "radio-playing"

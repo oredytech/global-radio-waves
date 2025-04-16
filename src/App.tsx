@@ -27,7 +27,7 @@ const queryClient = new QueryClient({
 
 const App = () => {
   useEffect(() => {
-    // Ajouter un espace en bas pour le player si nécessaire
+    // Add space at bottom for player if needed
     document.documentElement.style.setProperty('--player-height', '0px');
     
     return () => {
@@ -48,7 +48,11 @@ const App = () => {
               <Route path="/countries" element={<Countries />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/contact" element={<Contact />} />
+              
+              {/* Updated route to handle any station slug */}
               <Route path="/station/:stationId" element={<StationDetail />} />
+              <Route path="/radio/:stationId" element={<StationDetail />} />
+              
               <Route path="*" element={<NotFound />} />
             </Routes>
             <RadioPlayer />
