@@ -12,6 +12,8 @@ import Categories from "./pages/Categories";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Index from "./pages/Index";
+import RadioPlayer from "@/components/RadioPlayer";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,26 +24,38 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AudioPlayerProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/countries" element={<Countries />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <NavBar />
-        </BrowserRouter>
-      </TooltipProvider>
-    </AudioPlayerProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  useEffect(() => {
+    // Ajouter un espace en bas pour le player si nécessaire
+    document.documentElement.style.setProperty('--player-height', '0px');
+    
+    return () => {
+      document.documentElement.style.removeProperty('--player-height');
+    };
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AudioPlayerProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/news" element={<News />} />
+              <Route path="/countries" element={<Countries />} />
+              <Route path="/categories" element={<Categories />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <RadioPlayer />
+            <NavBar />
+          </BrowserRouter>
+        </TooltipProvider>
+      </AudioPlayerProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

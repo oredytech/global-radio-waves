@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
-import RadioPlayer from "@/components/RadioPlayer";
 import RadioCard from "@/components/RadioCard";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { 
@@ -74,7 +72,6 @@ const Index = () => {
     fetchStations();
   }, [debouncedSearchQuery]);
   
-  // Fetch African stations when the African tab is selected
   useEffect(() => {
     if (activeTab === "africa") {
       const fetchAfrican = async () => {
@@ -93,7 +90,6 @@ const Index = () => {
     }
   }, [activeTab]);
   
-  // Fetch stations by continent when a continent is selected
   useEffect(() => {
     if (selectedContinent && activeTab === "continent") {
       const fetchContinentStations = async () => {

@@ -22,6 +22,27 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Persistance du dernier état de la station
+  useEffect(() => {
+    const savedStation = localStorage.getItem('currentRadioStation');
+    if (savedStation) {
+      try {
+        const parsedStation = JSON.parse(savedStation);
+        setCurrentStation(parsedStation);
+        // Ne pas démarrer la lecture automatiquement pour éviter les problèmes d'autoplay
+      } catch (e) {
+        console.error("Erreur lors de la récupération de la station:", e);
+      }
+    }
+  }, []);
+
+  // Sauvegarder la station actuelle quand elle change
+  useEffect(() => {
+    if (currentStation) {
+      localStorage.setItem('currentRadioStation', JSON.stringify(currentStation));
+    }
+  }, [currentStation]);
+
   useEffect(() => {
     // Initialize audio element
     if (!audioRef.current) {
@@ -67,21 +88,21 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
   const loadStation = (station: RadioStation) => {
     if (!audioRef.current) return;
     
-    // Only load if it's a different station
-    if (!currentStation || currentStation.id !== station.id) {
-      setIsLoading(true);
-      setCurrentStation(station);
+    // Toujours mettre à jour l'état pour que le composant RadioPlayer soit rendu
+    setCurrentStation(station);
+    setIsLoading(true);
+    
+    // Charger l'audio uniquement si c'est une station différente ou si l'URL n'est pas définie
+    if (!audioRef.current.src || audioRef.current.src !== station.url) {
       audioRef.current.src = station.url;
       audioRef.current.load();
-      audioRef.current.play().catch((error) => {
-        console.error("Error playing audio:", error);
-        setIsLoading(false);
-        toast.error("Could not play this station. Please try another one.");
-      });
-    } else {
-      // If it's the same station, just toggle play/pause
-      togglePlayPause();
     }
+    
+    audioRef.current.play().catch((error) => {
+      console.error("Error playing audio:", error);
+      setIsLoading(false);
+      toast.error("Could not play this station. Please try another one.");
+    });
   };
   
   // Toggle play/pause

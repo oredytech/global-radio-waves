@@ -1,9 +1,10 @@
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { Play, Pause, Volume2, VolumeX, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
 
 const RadioPlayer: React.FC = () => {
   const { 
@@ -14,6 +15,20 @@ const RadioPlayer: React.FC = () => {
     togglePlayPause, 
     setVolume 
   } = useAudioPlayer();
+  
+  const playerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // S'assure que le player reste en bas de l'écran, au-dessus de la navbar
+    if (playerRef.current) {
+      const playerHeight = playerRef.current.offsetHeight;
+      document.documentElement.style.setProperty('--player-height', `${playerHeight}px`);
+    }
+    
+    return () => {
+      document.documentElement.style.setProperty('--player-height', '0px');
+    };
+  }, [currentStation]);
 
   if (!currentStation) {
     return null;
@@ -23,7 +38,13 @@ const RadioPlayer: React.FC = () => {
   const isMuted = volume === 0;
 
   return (
-    <div className="player-container px-4 py-3">
+    <div 
+      ref={playerRef}
+      className={cn(
+        "player-container fixed bottom-16 left-0 right-0 z-30 bg-black/95 backdrop-blur-md border-t border-white/10 px-4 py-3",
+        "transition-all duration-300 ease-in-out"
+      )}
+    >
       <div className="container mx-auto">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4 w-1/3">
