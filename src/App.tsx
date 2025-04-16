@@ -13,6 +13,7 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Index from "./pages/Index";
 import RadioPlayer from "@/components/RadioPlayer";
+import StationDetail from "./pages/StationDetail";
 import { useEffect } from "react";
 
 const queryClient = new QueryClient({
@@ -47,6 +48,7 @@ const App = () => {
               <Route path="/countries" element={<Countries />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/station/:stationId" element={<StationDetail />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <RadioPlayer />

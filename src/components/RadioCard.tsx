@@ -5,6 +5,7 @@ import { RadioStation } from "@/services/radioService";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 interface RadioCardProps {
   station: RadioStation;
@@ -18,6 +19,7 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
   
   const handlePlayClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     if (isCurrentStation) {
       togglePlayPause();
     } else {
@@ -31,12 +33,12 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
   const stationImage = imageError || !station.favicon ? defaultImage : station.favicon;
   
   return (
-    <div 
+    <Link
+      to={`/station/${station.id}`}
       className={cn(
         "radio-card flex flex-col h-48 cursor-pointer transition-all duration-300 group",
         isCurrentStation && "radio-playing"
       )}
-      onClick={() => loadStation(station)}
     >
       <div className="relative flex-1 bg-black/50 shadow-md overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center">
@@ -70,7 +72,7 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
         <h3 className="font-medium text-sm truncate text-white">{station.name}</h3>
         <p className="text-xs text-gray-400 mt-1">{station.country}</p>
       </div>
-    </div>
+    </Link>
   );
 };
 
