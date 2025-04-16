@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import RadioCard from "@/components/RadioCard";
@@ -250,8 +251,6 @@ const Index = () => {
           </ScrollArea>
         </DrawerContent>
       </Drawer>
-      
-      {currentStation && <RadioPlayer />}
     </div>
   );
 };
