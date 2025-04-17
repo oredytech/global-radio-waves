@@ -47,18 +47,20 @@ const RadioPlayer: React.FC = () => {
     >
       <div className="container mx-auto">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4 w-1/3 justify-center">
-            <img 
-              src={currentStation.favicon || defaultImage} 
-              alt={currentStation.name} 
-              className="h-14 w-14 rounded-md object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = defaultImage;
-              }}
-            />
-            <div className="overflow-hidden">
-              <h3 className="font-medium text-white truncate text-center">{currentStation.name}</h3>
-              <p className="text-xs text-gray-400 truncate text-center">{currentStation.country}</p>
+          <div className="flex items-center space-x-4 w-1/3">
+            <div className="flex justify-center w-full">
+              <img 
+                src={currentStation.favicon || defaultImage} 
+                alt={currentStation.name} 
+                className="h-14 w-14 rounded-md object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = defaultImage;
+                }}
+              />
+              <div className="overflow-hidden ml-3">
+                <h3 className="font-medium text-white truncate">{currentStation.name}</h3>
+                <p className="text-xs text-gray-400 truncate">{currentStation.country}</p>
+              </div>
             </div>
           </div>
           
@@ -71,11 +73,11 @@ const RadioPlayer: React.FC = () => {
               disabled={isLoading}
             >
               {isLoading ? (
-                <Loader2 className="h-8 w-8 animate-spin" />
+                <Loader2 className="h-8 w-8 animate-spin mx-auto" />
               ) : isPlaying ? (
-                <Pause className="h-8 w-8" />
+                <Pause className="h-8 w-8 mx-auto" />
               ) : (
-                <Play className="h-8 w-8 ml-0.5" />
+                <Play className="h-8 w-8 mx-auto ml-0.5" />
               )}
             </Button>
           </div>
@@ -87,7 +89,7 @@ const RadioPlayer: React.FC = () => {
               className="text-gray-400 hover:text-white hover:bg-transparent flex items-center justify-center"
               onClick={() => setVolume(isMuted ? 0.5 : 0)}
             >
-              {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+              {isMuted ? <VolumeX className="h-5 w-5 mx-auto" /> : <Volume2 className="h-5 w-5 mx-auto" />}
             </Button>
             <Slider 
               className="w-28" 

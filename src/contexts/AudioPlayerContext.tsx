@@ -117,11 +117,16 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
     // Force play with user interaction
     const playPromise = audioRef.current.play();
     if (playPromise !== undefined) {
-      playPromise.catch((error) => {
-        console.error("Error playing audio:", error);
-        setIsLoading(false);
-        toast.error("Could not play this station. Please try another one.");
-      });
+      playPromise
+        .then(() => {
+          setIsPlaying(true);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error playing audio:", error);
+          setIsLoading(false);
+          toast.error("Could not play this station. Please try another one.");
+        });
     }
   };
   
@@ -136,11 +141,16 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
       // Force play with user interaction
       const playPromise = audioRef.current.play();
       if (playPromise !== undefined) {
-        playPromise.catch((error) => {
-          console.error("Error playing audio:", error);
-          setIsLoading(false);
-          toast.error("Could not play this station. Please try again.");
-        });
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            console.error("Error playing audio:", error);
+            setIsLoading(false);
+            toast.error("Could not play this station. Please try again.");
+          });
       }
     }
   };

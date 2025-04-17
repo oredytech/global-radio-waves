@@ -29,6 +29,7 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
   
   const handlePlayClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     
     if (isCurrentStation) {
       togglePlayPause();
@@ -36,6 +37,7 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
       loadStation(station);
     }
     
+    // Navigate to station page
     navigate(`/station/${stationSlug}`);
   };
   
@@ -68,12 +70,12 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
               "size-12 rounded-full p-0 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 flex items-center justify-center",
               isCurrentStation && isPlaying ? "bg-gowera-highlight text-black" : "bg-gowera-highlight text-black"
             )}
-            onClick={(e) => e.stopPropagation()}
+            onClick={handlePlayClick}
           >
             {isCurrentStation && isPlaying ? (
-              <Pause size={22} />
+              <Pause size={22} className="flex-shrink-0 mx-auto" />
             ) : (
-              <Play size={22} className="ml-0.5" />
+              <Play size={22} className="flex-shrink-0 mx-auto ml-0.5" />
             )}
           </Button>
         </div>
