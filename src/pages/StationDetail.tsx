@@ -136,7 +136,7 @@ const StationDetail: React.FC = () => {
           
           <Button
             onClick={handlePlayClick}
-            className="bg-gowera-highlight text-black hover:bg-gowera-highlight/90 flex items-center px-6"
+            className="bg-gowera-highlight text-black hover:bg-gowera-highlight/90 flex items-center justify-center px-6"
           >
             {isCurrentlyPlaying ? (
               <>
@@ -161,7 +161,7 @@ const StationDetail: React.FC = () => {
             <p className="font-medium">{station.language || "Non spécifiée"}</p>
           </div>
           
-          {station.tags && station.tags.length > 0 && (
+          {station.tags && Array.isArray(station.tags) && station.tags.length > 0 && (
             <div className="md:col-span-2 text-center md:text-left">
               <h3 className="text-sm uppercase text-gray-400 mb-1">Catégories</h3>
               <div className="flex flex-wrap gap-2 justify-center md:justify-start">

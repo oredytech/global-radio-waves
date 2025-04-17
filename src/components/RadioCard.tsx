@@ -72,7 +72,7 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition-all duration-300">
           <Button
             className={cn(
-              "size-12 rounded-full p-0 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300",
+              "size-12 rounded-full p-0 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 flex items-center justify-center",
               isCurrentStation && isPlaying ? "bg-gowera-highlight text-black" : "bg-gowera-highlight text-black"
             )}
             onClick={handlePlayClick}
@@ -86,7 +86,7 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
         </div>
       </div>
       
-      <div className="p-3 bg-gowera-surface flex flex-col items-center text-center">
+      <div className="p-3 bg-gowera-surface flex flex-col items-center justify-center text-center">
         <h3 className="font-medium text-sm truncate text-white w-full">{station.name}</h3>
         <p className="text-xs text-gray-400 mt-1 w-full">{station.country}</p>
       </div>

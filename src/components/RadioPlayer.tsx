@@ -62,11 +62,11 @@ const RadioPlayer: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex items-center w-1/3 justify-center">
+          <div className="flex items-center justify-center w-1/3">
             <Button 
               variant="ghost" 
               size="icon" 
-              className="rounded-full hover:bg-white/10 text-white"
+              className="rounded-full hover:bg-white/10 text-white flex items-center justify-center"
               onClick={togglePlayPause}
               disabled={isLoading}
             >
@@ -84,7 +84,7 @@ const RadioPlayer: React.FC = () => {
             <Button 
               variant="ghost" 
               size="icon"
-              className="text-gray-400 hover:text-white hover:bg-transparent"
+              className="text-gray-400 hover:text-white hover:bg-transparent flex items-center justify-center"
               onClick={() => setVolume(isMuted ? 0.5 : 0)}
             >
               {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
