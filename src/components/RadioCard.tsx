@@ -18,7 +18,6 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
   
   const isCurrentStation = currentStation?.id === station.id;
   
-  // Generate a slug from station name
   const generateSlug = (name: string) => {
     return name
       .toLowerCase()
@@ -29,30 +28,24 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
   const stationSlug = generateSlug(station.name);
   
   const handlePlayClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
     e.preventDefault();
     
-    // First load/toggle the station
     if (isCurrentStation) {
       togglePlayPause();
     } else {
       loadStation(station);
     }
     
-    // Navigate after a small delay to ensure audio processing has started
-    setTimeout(() => {
-      navigate(`/station/${stationSlug}`);
-    }, 100);
+    navigate(`/station/${stationSlug}`);
   };
   
   const defaultImage = "https://placehold.co/100x100/333/888?text=Radio";
-  
-  // Improved image handling with fallback
   const stationImage = imageError || !station.favicon ? defaultImage : station.favicon;
   
   return (
     <Link
       to={`/station/${stationSlug}`}
+      onClick={handlePlayClick}
       className={cn(
         "radio-card flex flex-col h-48 cursor-pointer transition-all duration-300 group",
         isCurrentStation && "radio-playing"
@@ -75,7 +68,7 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
               "size-12 rounded-full p-0 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 flex items-center justify-center",
               isCurrentStation && isPlaying ? "bg-gowera-highlight text-black" : "bg-gowera-highlight text-black"
             )}
-            onClick={handlePlayClick}
+            onClick={(e) => e.stopPropagation()}
           >
             {isCurrentStation && isPlaying ? (
               <Pause size={22} />

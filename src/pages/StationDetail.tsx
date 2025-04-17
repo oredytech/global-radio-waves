@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -30,15 +29,10 @@ const StationDetail: React.FC = () => {
   
   const { data: articles } = useQuery({
     queryKey: ['news'],
-    queryFn: () => fetchAllArticles(10),
+    queryFn: () => fetchAllArticles(8),
   });
   
-  const recentArticles = articles?.filter(article => {
-    const articleDate = new Date(article.date);
-    const oneDayAgo = new Date();
-    oneDayAgo.setHours(oneDayAgo.getHours() - 24);
-    return articleDate >= oneDayAgo;
-  }).slice(0, 4) || [];
+  const recentArticles = articles?.slice(0, 8) || [];
   
   useEffect(() => {
     if (!stationId) {
@@ -59,7 +53,6 @@ const StationDetail: React.FC = () => {
         
         if (foundStation) {
           setStation(foundStation);
-          // Auto-start playing when found
           if (foundStation.id !== currentStation?.id) {
             loadStation(foundStation);
           }
@@ -103,10 +96,14 @@ const StationDetail: React.FC = () => {
   
   return (
     <div className="container mx-auto px-4 pb-32 pt-16">
-      <Link to="/" className="flex items-center text-gowera-highlight mb-4 hover:underline">
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Retour à l'accueil
-      </Link>
+      <div className="mb-8">
+        <Link to="/" className="flex items-center text-gowera-highlight mb-4 hover:underline">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Retour à l'accueil
+        </Link>
+        <h1 className="text-3xl font-bold mb-2">Écoutez en direct</h1>
+        <p className="text-gray-400">Découvrez les meilleures stations de radio en ligne</p>
+      </div>
       
       <div className="relative w-full h-48 md:h-64 rounded-lg overflow-hidden mb-6 bg-gowera-surface">
         <div 
@@ -183,7 +180,7 @@ const StationDetail: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold">Actualités récentes</h2>
           <div className="flex items-center text-sm text-gray-400">
-            <span>Dernières 24 heures</span>
+            <span>Dernières actualités</span>
           </div>
         </div>
         
