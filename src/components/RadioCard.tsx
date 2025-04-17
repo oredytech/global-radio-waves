@@ -39,8 +39,10 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
       loadStation(station);
     }
     
-    // Then navigate to the station page
-    navigate(`/station/${stationSlug}`);
+    // Navigate after a small delay to ensure audio processing has started
+    setTimeout(() => {
+      navigate(`/station/${stationSlug}`);
+    }, 100);
   };
   
   const defaultImage = "https://placehold.co/100x100/333/888?text=Radio";
@@ -84,9 +86,9 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
         </div>
       </div>
       
-      <div className="p-3 bg-gowera-surface">
-        <h3 className="font-medium text-sm truncate text-white">{station.name}</h3>
-        <p className="text-xs text-gray-400 mt-1">{station.country}</p>
+      <div className="p-3 bg-gowera-surface flex flex-col items-center text-center">
+        <h3 className="font-medium text-sm truncate text-white w-full">{station.name}</h3>
+        <p className="text-xs text-gray-400 mt-1 w-full">{station.country}</p>
       </div>
     </Link>
   );

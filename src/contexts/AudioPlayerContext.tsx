@@ -22,21 +22,36 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Persistance du dernier état de la station
+  // Persistence of last station state
   useEffect(() => {
     const savedStation = localStorage.getItem('currentRadioStation');
     if (savedStation) {
       try {
         const parsedStation = JSON.parse(savedStation);
         setCurrentStation(parsedStation);
-        // Ne pas démarrer la lecture automatiquement pour éviter les problèmes d'autoplay
+        // Don't autoplay to avoid autoplay issues
       } catch (e) {
-        console.error("Erreur lors de la récupération de la station:", e);
+        console.error("Error retrieving station:", e);
       }
     }
+    
+    // Store all stations in localStorage for easier retrieval in station detail page
+    const fetchAndStoreStations = async () => {
+      try {
+        const response = await fetch('https://de1.api.radio-browser.info/json/stations/topvote/100');
+        if (response.ok) {
+          const stations = await response.json();
+          localStorage.setItem('allRadioStations', JSON.stringify(stations));
+        }
+      } catch (error) {
+        console.error("Error fetching stations:", error);
+      }
+    };
+    
+    fetchAndStoreStations();
   }, []);
 
-  // Sauvegarder la station actuelle quand elle change
+  // Save current station when it changes
   useEffect(() => {
     if (currentStation) {
       localStorage.setItem('currentRadioStation', JSON.stringify(currentStation));
@@ -48,6 +63,7 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
     if (!audioRef.current) {
       audioRef.current = new Audio();
       audioRef.current.volume = volume;
+      audioRef.current.preload = "auto";
       
       // Add event listeners
       audioRef.current.addEventListener("playing", () => {
@@ -88,21 +104,25 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
   const loadStation = (station: RadioStation) => {
     if (!audioRef.current) return;
     
-    // Toujours mettre à jour l'état pour que le composant RadioPlayer soit rendu
+    // Always update state so RadioPlayer component is rendered
     setCurrentStation(station);
     setIsLoading(true);
     
-    // Charger l'audio uniquement si c'est une station différente ou si l'URL n'est pas définie
+    // Load audio only if it's a different station or URL isn't defined
     if (!audioRef.current.src || audioRef.current.src !== station.url) {
       audioRef.current.src = station.url;
       audioRef.current.load();
     }
     
-    audioRef.current.play().catch((error) => {
-      console.error("Error playing audio:", error);
-      setIsLoading(false);
-      toast.error("Could not play this station. Please try another one.");
-    });
+    // Force play with user interaction
+    const playPromise = audioRef.current.play();
+    if (playPromise !== undefined) {
+      playPromise.catch((error) => {
+        console.error("Error playing audio:", error);
+        setIsLoading(false);
+        toast.error("Could not play this station. Please try another one.");
+      });
+    }
   };
   
   // Toggle play/pause
@@ -113,11 +133,15 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
       audioRef.current.pause();
     } else {
       setIsLoading(true);
-      audioRef.current.play().catch((error) => {
-        console.error("Error playing audio:", error);
-        setIsLoading(false);
-        toast.error("Could not play this station. Please try again.");
-      });
+      // Force play with user interaction
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((error) => {
+          console.error("Error playing audio:", error);
+          setIsLoading(false);
+          toast.error("Could not play this station. Please try again.");
+        });
+      }
     }
   };
   

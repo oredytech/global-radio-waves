@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -58,14 +59,21 @@ const StationDetail: React.FC = () => {
         
         if (foundStation) {
           setStation(foundStation);
+          // Auto-start playing when found
+          if (foundStation.id !== currentStation?.id) {
+            loadStation(foundStation);
+          }
         } else {
           toast.info("Station information is being loaded...");
         }
+      } else {
+        toast.info("Loading station data...");
       }
     } catch (error) {
       console.error("Error retrieving station:", error);
+      toast.error("Failed to load station information");
     }
-  }, [stationId, currentStation, navigate]);
+  }, [stationId, currentStation, navigate, loadStation]);
   
   if (!station) {
     return (
@@ -123,8 +131,8 @@ const StationDetail: React.FC = () => {
       </div>
       
       <div className="bg-gowera-surface p-6 rounded-lg shadow-lg mb-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-          <h1 className="text-2xl font-bold mb-2 md:mb-0">{station.name}</h1>
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold mb-2 md:mb-0 text-center md:text-left">{station.name}</h1>
           
           <Button
             onClick={handlePlayClick}
@@ -136,27 +144,27 @@ const StationDetail: React.FC = () => {
               </>
             ) : (
               <>
-                <Play className="mr-2 h-5 w-5 ml-0.5" /> Ecouter
+                <Play className="mr-2 h-5 w-5" /> Ecouter
               </>
             )}
           </Button>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <div>
+          <div className="text-center md:text-left">
             <h3 className="text-sm uppercase text-gray-400 mb-1">Pays</h3>
             <p className="font-medium">{station.country}</p>
           </div>
           
-          <div>
+          <div className="text-center md:text-left">
             <h3 className="text-sm uppercase text-gray-400 mb-1">Langue</h3>
             <p className="font-medium">{station.language || "Non spécifiée"}</p>
           </div>
           
           {station.tags && station.tags.length > 0 && (
-            <div className="md:col-span-2">
+            <div className="md:col-span-2 text-center md:text-left">
               <h3 className="text-sm uppercase text-gray-400 mb-1">Catégories</h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                 {station.tags.map((tag, index) => (
                   <span 
                     key={index}

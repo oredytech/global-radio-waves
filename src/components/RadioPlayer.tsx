@@ -19,7 +19,7 @@ const RadioPlayer: React.FC = () => {
   const playerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // S'assure que le player reste en bas de l'écran, au-dessus de la navbar
+    // Ensure player stays at bottom of screen, above navbar
     if (playerRef.current) {
       const playerHeight = playerRef.current.offsetHeight;
       document.documentElement.style.setProperty('--player-height', `${playerHeight}px`);
@@ -47,7 +47,7 @@ const RadioPlayer: React.FC = () => {
     >
       <div className="container mx-auto">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4 w-1/3">
+          <div className="flex items-center space-x-4 w-1/3 justify-center">
             <img 
               src={currentStation.favicon || defaultImage} 
               alt={currentStation.name} 
@@ -57,8 +57,8 @@ const RadioPlayer: React.FC = () => {
               }}
             />
             <div className="overflow-hidden">
-              <h3 className="font-medium text-white truncate">{currentStation.name}</h3>
-              <p className="text-xs text-gray-400 truncate">{currentStation.country}</p>
+              <h3 className="font-medium text-white truncate text-center">{currentStation.name}</h3>
+              <p className="text-xs text-gray-400 truncate text-center">{currentStation.country}</p>
             </div>
           </div>
           
@@ -80,7 +80,7 @@ const RadioPlayer: React.FC = () => {
             </Button>
           </div>
           
-          <div className="flex items-center space-x-2 w-1/3 justify-end">
+          <div className="flex items-center space-x-2 w-1/3 justify-center">
             <Button 
               variant="ghost" 
               size="icon"

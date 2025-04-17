@@ -49,7 +49,7 @@ const App = () => {
               <Route path="/categories" element={<Categories />} />
               <Route path="/contact" element={<Contact />} />
               
-              {/* Updated route to handle any station slug */}
+              {/* Updated routes to handle any station slug */}
               <Route path="/station/:stationId" element={<StationDetail />} />
               <Route path="/radio/:stationId" element={<StationDetail />} />
               
