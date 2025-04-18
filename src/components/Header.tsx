@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Radio, Search, ChevronLeft, ChevronRight, Menu } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -19,11 +19,8 @@ const Header: React.FC<HeaderProps> = ({ searchQuery, setSearchQuery, onMenuClic
       <div className="container flex items-center justify-between h-16 px-4 md:px-6">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <Radio className="w-8 h-8 text-gowera-highlight" />
             <h1 className={`text-2xl font-bold tracking-tighter ${isMobile ? "hidden" : "block"}`}>
-              <span className="text-gowera-blue">GOW</span>
-              <span className="text-gowera-gold">E</span>
-              <span className="text-gowera-red">RA</span>
+              <span className="text-primary">GOWERA</span>
             </h1>
           </div>
           
