@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Header from "@/components/Header";
 import RadioCard from "@/components/RadioCard";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { 
@@ -121,12 +120,6 @@ const Index = () => {
   
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background pb-24">
-      <Header 
-        searchQuery={searchQuery} 
-        setSearchQuery={setSearchQuery} 
-        onMenuClick={handleMenuClick}
-      />
-      
       <main className="flex-1 container px-4 py-6 md:px-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
           <TabsList className="grid w-full grid-cols-2 sm:w-[400px]">

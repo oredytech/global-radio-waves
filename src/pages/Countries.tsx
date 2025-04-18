@@ -1,6 +1,4 @@
-
 import React, { useState } from "react";
-import Header from "@/components/Header";
 import RadioPlayer from "@/components/RadioPlayer";
 import RadioCard from "@/components/RadioCard";
 import CountryFilter from "@/components/CountryFilter";
@@ -49,12 +47,6 @@ const Countries: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background">
-      <Header 
-        searchQuery={searchQuery} 
-        setSearchQuery={setSearchQuery} 
-        onMenuClick={handleMenuClick}
-      />
-      
       <main className="flex-1 container px-4 py-6 md:px-6">
         <div className="mb-8">
           <CountryFilter 

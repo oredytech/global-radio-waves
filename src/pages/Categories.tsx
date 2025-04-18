@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Header from "@/components/Header";
 import RadioCard from "@/components/RadioCard";
 import { CategoryInfo, RadioStation, fetchCategories, fetchStationsByTag } from "@/services/radioService";
 import { Loader2 } from "lucide-react";
 
-interface CategoriesProps {
-  
-}
-
 const Categories = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState<CategoryInfo[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [stations, setStations] = useState<RadioStation[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -50,18 +45,11 @@ const Categories = () => {
   }, [selectedCategory]);
 
   const handleMenuClick = () => {
-    // Menu handling can be implemented here if needed
     console.log("Menu clicked from Categories page");
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background">
-      <Header 
-        searchQuery={searchQuery} 
-        setSearchQuery={setSearchQuery} 
-        onMenuClick={handleMenuClick}
-      />
-      
       <main className="flex-1 container px-4 py-6 md:px-6">
         <div>
           <h2 className="text-2xl font-bold mb-6 text-white">

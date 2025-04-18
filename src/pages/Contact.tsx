@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Header from "@/components/Header";
 import RadioPlayer from "@/components/RadioPlayer";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { Input } from "@/components/ui/input";
@@ -42,12 +41,6 @@ const Contact: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background">
-      <Header 
-        searchQuery={searchQuery}
-        setSearchQuery={() => handleSearch()}
-        onMenuClick={handleMenuClick}
-      />
-      
       <main className="flex-1 container px-4 py-6 md:px-6">
         <div className="max-w-lg mx-auto">
           <h2 className="text-2xl font-bold mb-6 text-white">Contactez-nous</h2>

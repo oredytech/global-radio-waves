@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AudioPlayerProvider } from "@/contexts/AudioPlayerContext";
+import Header from "@/components/Header";
 import NavBar from "@/components/NavBar";
 import News from "./pages/News";
 import Countries from "./pages/Countries";
@@ -14,7 +15,7 @@ import NotFound from "./pages/NotFound";
 import Index from "./pages/Index";
 import RadioPlayer from "@/components/RadioPlayer";
 import StationDetail from "./pages/StationDetail";
-import { useEffect } from "react";
+import { useState } from "react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,14 +27,12 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  useEffect(() => {
-    // Add space at bottom for player if needed
-    document.documentElement.style.setProperty('--player-height', '0px');
-    
-    return () => {
-      document.documentElement.style.removeProperty('--player-height');
-    };
-  }, []);
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  const handleMenuClick = () => {
+    // Menu handling can be implemented here if needed
+    console.log("Menu clicked from App");
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -42,17 +41,19 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <Header
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              onMenuClick={handleMenuClick}
+            />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/news" element={<News />} />
               <Route path="/countries" element={<Countries />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/contact" element={<Contact />} />
-              
-              {/* Updated routes to handle any station slug */}
               <Route path="/station/:stationId" element={<StationDetail />} />
               <Route path="/radio/:stationId" element={<StationDetail />} />
-              
               <Route path="*" element={<NotFound />} />
             </Routes>
             <RadioPlayer />
