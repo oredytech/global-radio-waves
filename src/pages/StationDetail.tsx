@@ -54,7 +54,8 @@ const StationDetail: React.FC = () => {
         
         if (foundStation) {
           setStation(foundStation);
-          if (foundStation.id !== currentStation?.id) {
+          if (!currentStation || foundStation.id !== currentStation.id) {
+            // Force load the station
             loadStation(foundStation);
           }
         } else {

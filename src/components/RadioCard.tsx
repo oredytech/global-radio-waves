@@ -47,7 +47,6 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
   return (
     <Link
       to={`/station/${stationSlug}`}
-      onClick={handlePlayClick}
       className={cn(
         "radio-card flex flex-col h-48 cursor-pointer transition-all duration-300 group",
         isCurrentStation && "radio-playing"
@@ -73,9 +72,9 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
             onClick={handlePlayClick}
           >
             {isCurrentStation && isPlaying ? (
-              <Pause size={22} className="flex-shrink-0 mx-auto" />
+              <Pause size={22} className="m-auto" />
             ) : (
-              <Play size={22} className="flex-shrink-0 mx-auto ml-0.5" />
+              <Play size={22} className="m-auto ml-0.5" />
             )}
           </Button>
         </div>
