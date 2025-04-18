@@ -41,6 +41,7 @@ const StationDetail: React.FC = () => {
       return;
     }
     
+    // If the current station matches the URL slug, use that
     if (currentStation && generateSlug(currentStation.name) === stationId) {
       setStation(currentStation);
       return;
@@ -54,28 +55,59 @@ const StationDetail: React.FC = () => {
         
         if (foundStation) {
           setStation(foundStation);
-          if (!currentStation || foundStation.id !== currentStation.id) {
-            // Force load the station
-            loadStation(foundStation);
-          }
         } else {
           toast.info("Station information is being loaded...");
+          // Try fetching directly from API if not in localstorage
+          fetch('https://de1.api.radio-browser.info/json/stations/byname/' + stationId.replace(/-/g, ' ') + '?limit=5')
+            .then(response => response.json())
+            .then(data => {
+              if (data && data.length > 0) {
+                setStation(data[0]);
+              } else {
+                toast.error("Station not found");
+              }
+            })
+            .catch(error => {
+              console.error("Error fetching station:", error);
+              toast.error("Failed to load station");
+            });
         }
       } else {
         toast.info("Loading station data...");
+        // Try fetching directly from API
+        fetch('https://de1.api.radio-browser.info/json/stations/byname/' + stationId.replace(/-/g, ' ') + '?limit=5')
+          .then(response => response.json())
+          .then(data => {
+            if (data && data.length > 0) {
+              setStation(data[0]);
+            } else {
+              toast.error("Station not found");
+            }
+          })
+          .catch(error => {
+            console.error("Error fetching station:", error);
+            toast.error("Failed to load station");
+          });
       }
     } catch (error) {
       console.error("Error retrieving station:", error);
       toast.error("Failed to load station information");
     }
-  }, [stationId, currentStation, navigate, loadStation]);
+  }, [stationId, currentStation, navigate]);
+  
+  useEffect(() => {
+    // If we have station data but it's not loaded in the audio player, load it
+    if (station && (!currentStation || station.id !== currentStation.id)) {
+      loadStation(station);
+    }
+  }, [station, currentStation, loadStation]);
   
   if (!station) {
     return (
       <div className="container mx-auto px-4 py-20">
         <Link to="/" className="flex items-center text-gowera-highlight mb-4 hover:underline">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Return to home
+          Retour à l'accueil
         </Link>
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gowera-highlight"></div>

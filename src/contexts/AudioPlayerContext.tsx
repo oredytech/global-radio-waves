@@ -117,7 +117,10 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
       // Stop any currently playing audio
       audioRef.current.pause();
       
-      // Load audio
+      // Clear src property before loading new URL
+      audioRef.current.src = "";
+      
+      // Load audio with the new URL
       audioRef.current.src = station.url;
       audioRef.current.load();
       
@@ -148,6 +151,7 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
     
     if (isPlaying) {
       audioRef.current.pause();
+      setIsPlaying(false);
     } else {
       setIsLoading(true);
       
