@@ -9,15 +9,16 @@ const NavBar: React.FC = () => {
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-black/90 backdrop-blur-md border-t border-white/10 h-16 pb-safe-area">
       <div className="container mx-auto flex items-center justify-around h-full">
         <TooltipProvider>
+          {/* Updated each NavLink to ensure centered alignment */}
           <Tooltip>
             <TooltipTrigger asChild>
               <NavLink 
                 to="/" 
-                className={({ isActive }) => `flex flex-col items-center justify-center text-center ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
+                className={({ isActive }) => `flex flex-col items-center justify-center text-center w-full ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
                 end
               >
-                <Home size={20} className="mb-1" />
-                <span className="text-[10px] md:text-xs">Accueil</span>
+                <Home size={20} className="mb-1 mx-auto" />
+                <span className="text-[10px] md:text-xs text-center">Accueil</span>
               </NavLink>
             </TooltipTrigger>
             <TooltipContent className="md:hidden">
@@ -29,10 +30,10 @@ const NavBar: React.FC = () => {
             <TooltipTrigger asChild>
               <NavLink 
                 to="/news" 
-                className={({ isActive }) => `flex flex-col items-center justify-center text-center ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
+                className={({ isActive }) => `flex flex-col items-center justify-center text-center w-full ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
               >
-                <Newspaper size={20} className="mb-1" />
-                <span className="text-[10px] md:text-xs">Actualités</span>
+                <Newspaper size={20} className="mb-1 mx-auto" />
+                <span className="text-[10px] md:text-xs text-center">Actualités</span>
               </NavLink>
             </TooltipTrigger>
             <TooltipContent className="md:hidden">
@@ -44,10 +45,10 @@ const NavBar: React.FC = () => {
             <TooltipTrigger asChild>
               <NavLink 
                 to="/countries" 
-                className={({ isActive }) => `flex flex-col items-center justify-center text-center ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
+                className={({ isActive }) => `flex flex-col items-center justify-center text-center w-full ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
               >
-                <Globe size={20} className="mb-1" />
-                <span className="text-[10px] md:text-xs">Pays</span>
+                <Globe size={20} className="mb-1 mx-auto" />
+                <span className="text-[10px] md:text-xs text-center">Pays</span>
               </NavLink>
             </TooltipTrigger>
             <TooltipContent className="md:hidden">
@@ -59,10 +60,10 @@ const NavBar: React.FC = () => {
             <TooltipTrigger asChild>
               <NavLink 
                 to="/categories" 
-                className={({ isActive }) => `flex flex-col items-center justify-center text-center ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
+                className={({ isActive }) => `flex flex-col items-center justify-center text-center w-full ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
               >
-                <Music size={20} className="mb-1" />
-                <span className="text-[10px] md:text-xs">Catégorie</span>
+                <Music size={20} className="mb-1 mx-auto" />
+                <span className="text-[10px] md:text-xs text-center">Catégorie</span>
               </NavLink>
             </TooltipTrigger>
             <TooltipContent className="md:hidden">
@@ -74,10 +75,10 @@ const NavBar: React.FC = () => {
             <TooltipTrigger asChild>
               <NavLink 
                 to="/contact" 
-                className={({ isActive }) => `flex flex-col items-center justify-center text-center ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
+                className={({ isActive }) => `flex flex-col items-center justify-center text-center w-full ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
               >
-                <Mail size={20} className="mb-1" />
-                <span className="text-[10px] md:text-xs">Contacts</span>
+                <Mail size={20} className="mb-1 mx-auto" />
+                <span className="text-[10px] md:text-xs text-center">Contacts</span>
               </NavLink>
             </TooltipTrigger>
             <TooltipContent className="md:hidden">
@@ -89,10 +90,10 @@ const NavBar: React.FC = () => {
             <TooltipTrigger asChild>
               <NavLink 
                 to="/about" 
-                className={({ isActive }) => `flex flex-col items-center justify-center text-center ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
+                className={({ isActive }) => `flex flex-col items-center justify-center text-center w-full ${isActive ? 'text-gowera-highlight' : 'text-gray-400'}`}
               >
-                <Info size={20} className="mb-1" />
-                <span className="text-[10px] md:text-xs">A propos</span>
+                <Info size={20} className="mb-1 mx-auto" />
+                <span className="text-[10px] md:text-xs text-center">A propos</span>
               </NavLink>
             </TooltipTrigger>
             <TooltipContent className="md:hidden">
