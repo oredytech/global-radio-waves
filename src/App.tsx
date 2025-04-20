@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AudioPlayerProvider } from "@/contexts/AudioPlayerContext";
 import Header from "@/components/Header";
 import NavBar from "@/components/NavBar";
+import Footer from "@/components/Footer";
 import News from "./pages/News";
 import Countries from "./pages/Countries";
 import Categories from "./pages/Categories";
@@ -41,23 +42,28 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Header
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              onMenuClick={handleMenuClick}
-            />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/news" element={<News />} />
-              <Route path="/countries" element={<Countries />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/station/:stationId" element={<StationDetail />} />
-              <Route path="/radio/:stationId" element={<StationDetail />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <RadioPlayer />
-            <NavBar />
+            <div className="flex flex-col min-h-screen">
+              <Header
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                onMenuClick={handleMenuClick}
+              />
+              <main className="flex-grow">
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/news" element={<News />} />
+                  <Route path="/countries" element={<Countries />} />
+                  <Route path="/categories" element={<Categories />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/station/:stationId" element={<StationDetail />} />
+                  <Route path="/radio/:stationId" element={<StationDetail />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </main>
+              <Footer />
+              <RadioPlayer />
+              <NavBar />
+            </div>
           </BrowserRouter>
         </TooltipProvider>
       </AudioPlayerProvider>
