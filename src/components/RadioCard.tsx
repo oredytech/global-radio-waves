@@ -66,15 +66,15 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition-all duration-300">
           <Button
             className={cn(
-              "size-12 rounded-full p-0 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 flex items-center justify-center",
+              "size-12 rounded-full p-0 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300",
               isCurrentStation && isPlaying ? "bg-gowera-highlight text-black" : "bg-gowera-highlight text-black"
             )}
             onClick={handlePlayClick}
           >
             {isCurrentStation && isPlaying ? (
-              <Pause size={22} className="m-auto" />
+              <Pause className="m-auto" />
             ) : (
-              <Play size={22} className="m-auto ml-0.5" />
+              <Play className="m-auto" />
             )}
           </Button>
         </div>
