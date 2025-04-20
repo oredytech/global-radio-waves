@@ -49,47 +49,47 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
     };
     
     fetchAndStoreStations();
-  }, []);
-
-  // Create audio element on mount
-  useEffect(() => {
-    // Initialize audio element
-    if (!audioRef.current) {
-      audioRef.current = new Audio();
-      audioRef.current.volume = volume;
-      audioRef.current.preload = "auto";
-      
-      // Add event listeners
-      audioRef.current.addEventListener("playing", () => {
-        setIsPlaying(true);
-        setIsLoading(false);
-      });
-      
-      audioRef.current.addEventListener("pause", () => {
-        setIsPlaying(false);
-      });
-      
-      audioRef.current.addEventListener("error", (e) => {
-        console.error("Audio error:", e);
-        setIsLoading(false);
-        setIsPlaying(false);
-        toast.error("Error playing this station. Please try another one.");
-      });
-      
-      audioRef.current.addEventListener("waiting", () => {
-        setIsLoading(true);
-      });
-    }
+    
+    // Create audio element on component mount
+    audioRef.current = new Audio();
+    audioRef.current.volume = volume;
+    audioRef.current.preload = "auto";
+    
+    // Add event listeners
+    const handlePlaying = () => {
+      setIsPlaying(true);
+      setIsLoading(false);
+    };
+    
+    const handlePause = () => {
+      setIsPlaying(false);
+    };
+    
+    const handleError = (e: Event) => {
+      console.error("Audio error:", e);
+      setIsLoading(false);
+      setIsPlaying(false);
+      toast.error("Error playing this station. Please try another one.");
+    };
+    
+    const handleWaiting = () => {
+      setIsLoading(true);
+    };
+    
+    audioRef.current.addEventListener("playing", handlePlaying);
+    audioRef.current.addEventListener("pause", handlePause);
+    audioRef.current.addEventListener("error", handleError);
+    audioRef.current.addEventListener("waiting", handleWaiting);
     
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.src = "";
-        // Remove all event listeners
-        audioRef.current.removeEventListener("playing", () => {});
-        audioRef.current.removeEventListener("pause", () => {});
-        audioRef.current.removeEventListener("error", () => {});
-        audioRef.current.removeEventListener("waiting", () => {});
+        // Clean up event listeners
+        audioRef.current.removeEventListener("playing", handlePlaying);
+        audioRef.current.removeEventListener("pause", handlePause);
+        audioRef.current.removeEventListener("error", handleError);
+        audioRef.current.removeEventListener("waiting", handleWaiting);
       }
     };
   }, []);
@@ -109,40 +109,37 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
       audioRef.current.volume = volume;
     }
     
-    // Always update state so RadioPlayer component is rendered
+    // Always update current station state
     setCurrentStation(station);
     setIsLoading(true);
     
-    try {
-      // Stop any currently playing audio
-      audioRef.current.pause();
-      
-      // Clear src property before loading new URL
-      audioRef.current.src = "";
-      
-      // Load audio with the new URL
-      audioRef.current.src = station.url;
-      audioRef.current.load();
-      
-      // Force play with user interaction
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            setIsPlaying(true);
-            setIsLoading(false);
-          })
-          .catch((error) => {
-            console.error("Error playing audio:", error);
-            setIsLoading(false);
-            toast.error("Could not play this station. Please try another one.");
-          });
+    // Stop any currently playing audio and clear source
+    audioRef.current.pause();
+    audioRef.current.src = "";
+    
+    // Small timeout to ensure the previous audio is properly stopped
+    setTimeout(() => {
+      if (audioRef.current) {
+        // Set new source and load
+        audioRef.current.src = station.url;
+        audioRef.current.load();
+        
+        // Play the audio
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              setIsPlaying(true);
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              console.error("Error playing audio:", error);
+              setIsLoading(false);
+              toast.error("Could not play this station. Please try another one.");
+            });
+        }
       }
-    } catch (error) {
-      console.error("Error loading audio:", error);
-      setIsLoading(false);
-      toast.error("Error loading station. Please try again.");
-    }
+    }, 100);
   };
   
   // Toggle play/pause

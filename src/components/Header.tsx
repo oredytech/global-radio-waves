@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({ searchQuery, setSearchQuery, onMenuClic
       <div className="container flex items-center justify-between h-16 px-4 md:px-6">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <h1 className={`text-2xl font-bold tracking-tighter ${isMobile ? "hidden" : "block"}`}>
+            <h1 className="text-2xl font-bold tracking-tighter">
               <span className="text-primary">GOWERA</span>
             </h1>
           </div>
