@@ -1,11 +1,11 @@
-
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { RadioStation } from "@/services/radioService";
-import { toast } from "sonner";
 import { useAudioElement } from "@/hooks/useAudioElement";
 import { setupAudioEventListeners } from "@/utils/audioHandlers";
 import { useStationPersistence } from "@/hooks/useStationPersistence";
 import { useStationsFetching } from "@/hooks/useStationsFetching";
+import { usePlayPauseLogic } from "@/hooks/usePlayPauseLogic";
+import { toast } from "sonner";
 
 interface AudioPlayerContextType {
   currentStation: RadioStation | null;
@@ -27,100 +27,41 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
   
   const audioRef = useAudioElement(volume);
   
-  // Initialize persistence hooks
   useStationPersistence(currentStation);
   useStationsFetching();
+  
+  const { loadStation: handleLoadStation, togglePlayPause: handleTogglePlayPause } = usePlayPauseLogic({
+    audioRef,
+    setIsLoading,
+    setIsPlaying
+  });
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!audioRef.current) return;
-
-    const handlePlaying = () => {
-      setIsPlaying(true);
-      setIsLoading(false);
-    };
-    
-    const handlePause = () => {
-      setIsPlaying(false);
-    };
-    
-    const handleError = () => {
-      setIsLoading(false);
-      setIsPlaying(false);
-      toast.error("Error playing this station. Please try another one.");
-    };
-    
-    const handleWaiting = () => {
-      setIsLoading(true);
-    };
 
     return setupAudioEventListeners(
       audioRef.current,
-      handlePlaying,
-      handlePause,
-      handleError,
-      handleWaiting
+      () => {
+        setIsPlaying(true);
+        setIsLoading(false);
+      },
+      () => setIsPlaying(false),
+      () => {
+        setIsLoading(false);
+        setIsPlaying(false);
+        toast.error("Error playing this station. Please try another one.");
+      },
+      () => setIsLoading(true)
     );
   }, [audioRef.current]);
   
   const loadStation = (station: RadioStation) => {
-    if (!audioRef.current) return;
-    
     setCurrentStation(station);
-    setIsLoading(true);
-    
-    audioRef.current.pause();
-    audioRef.current.src = "";
-    
-    setTimeout(() => {
-      if (audioRef.current) {
-        audioRef.current.src = station.url;
-        audioRef.current.load();
-        
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              setIsPlaying(true);
-              setIsLoading(false);
-            })
-            .catch((error) => {
-              console.error("Error playing audio:", error);
-              setIsLoading(false);
-              toast.error("Could not play this station. Please try another one.");
-            });
-        }
-      }
-    }, 100);
+    handleLoadStation(station);
   };
   
   const togglePlayPause = () => {
-    if (!audioRef.current || !currentStation) return;
-    
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      setIsLoading(true);
-      
-      if (!audioRef.current.src || audioRef.current.src === '') {
-        audioRef.current.src = currentStation.url;
-        audioRef.current.load();
-      }
-      
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            setIsPlaying(true);
-            setIsLoading(false);
-          })
-          .catch((error) => {
-            console.error("Error playing audio:", error);
-            setIsLoading(false);
-            toast.error("Could not play this station. Please try again.");
-          });
-      }
-    }
+    handleTogglePlayPause(currentStation);
   };
   
   const setVolume = (newVolume: number) => {
