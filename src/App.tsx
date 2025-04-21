@@ -17,6 +17,7 @@ import Index from "./pages/Index";
 import RadioPlayer from "@/components/RadioPlayer";
 import StationDetail from "./pages/StationDetail";
 import { useState } from "react";
+import MenuDrawer from "@/components/MenuDrawer";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,11 +30,19 @@ const queryClient = new QueryClient({
 
 const App = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedContinent, setSelectedContinent] = useState<string | null>(null);
   
   const handleMenuClick = () => {
-    // Menu handling can be implemented here if needed
-    console.log("Menu clicked from App");
+    setDrawerOpen(true);
   };
+  
+  const handleContinentClick = (continent: string) => {
+    setSelectedContinent(continent);
+    setDrawerOpen(false);
+  };
+
+  const continents = ['Afrique', 'Europe', 'Amérique du Nord', 'Amérique du Sud', 'Asie', 'Océanie'];
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -63,6 +72,13 @@ const App = () => {
               <Footer />
               <RadioPlayer />
               <NavBar />
+              <MenuDrawer
+                open={drawerOpen}
+                onOpenChange={setDrawerOpen}
+                onContinentClick={handleContinentClick}
+                continents={continents}
+                selectedContinent={selectedContinent}
+              />
             </div>
           </BrowserRouter>
         </TooltipProvider>

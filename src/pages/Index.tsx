@@ -1,9 +1,6 @@
 
 import React, { useState, useEffect } from "react";
 import StationGrid from "@/components/StationGrid";
-import MenuDrawer from "@/components/MenuDrawer";
-import IndexHeader from "@/components/IndexHeader";
-import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import {
   RadioStation,
   fetchTopStations,
@@ -24,12 +21,10 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingAfrican, setIsLoadingAfrican] = useState(false);
   const [isLoadingContinent, setIsLoadingContinent] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("popular");
   const [selectedContinent, setSelectedContinent] = useState<string | null>(null);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
-  const continents = ['Afrique', 'Europe', 'Amérique du Nord', 'Amérique du Sud', 'Asie', 'Océanie'];
   const continentMapping: Record<string, string> = {
     'Afrique': 'Africa',
     'Europe': 'Europe',
@@ -94,16 +89,8 @@ const Index = () => {
     }
   }, [selectedContinent, activeTab]);
 
-  const handleMenuClick = () => setDrawerOpen(true);
-  const handleContinentClick = (continent: string) => {
-    setSelectedContinent(continent);
-    setActiveTab("continent");
-    setDrawerOpen(false);
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background pb-24">
-      <IndexHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} onMenuClick={handleMenuClick} />
       <main className="flex-1 container px-4 py-6 md:px-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
           <TabsList className="grid w-full grid-cols-2 sm:w-[400px]">
@@ -154,13 +141,6 @@ const Index = () => {
           </TabsContent>
         </Tabs>
       </main>
-      <MenuDrawer
-        open={drawerOpen}
-        onOpenChange={setDrawerOpen}
-        onContinentClick={handleContinentClick}
-        continents={continents}
-        selectedContinent={selectedContinent}
-      />
     </div>
   );
 };
