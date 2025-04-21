@@ -14,11 +14,17 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
     if (!audioRef.current) return;
     
     setIsLoading(true);
+    
+    // Always pause the current audio first before changing source
     audioRef.current.pause();
+    
+    // Clear the current source
     audioRef.current.src = "";
     
+    // Small timeout to ensure proper state transitions
     setTimeout(() => {
       if (audioRef.current) {
+        // Set the new source
         audioRef.current.src = station.url;
         audioRef.current.load();
         
@@ -32,6 +38,7 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
             .catch((error) => {
               console.error("Error playing audio:", error);
               setIsLoading(false);
+              setIsPlaying(false);
               toast.error("Could not play this station. Please try another one.");
             });
         }
@@ -45,6 +52,7 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
     if (audioRef.current.paused) {
       setIsLoading(true);
       
+      // If source is empty or has changed, set it
       if (!audioRef.current.src || audioRef.current.src === '') {
         audioRef.current.src = currentStation.url;
         audioRef.current.load();
@@ -60,6 +68,7 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
           .catch((error) => {
             console.error("Error playing audio:", error);
             setIsLoading(false);
+            setIsPlaying(false);
             toast.error("Could not play this station. Please try again.");
           });
       }
