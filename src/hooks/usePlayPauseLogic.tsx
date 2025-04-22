@@ -16,27 +16,33 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
   const loadStation = (station: RadioStation) => {
     if (!audioRef.current) return;
     
-    setIsLoading(true);
-    setIsPlaying(false); // Assurons-nous que l'état isPlaying est bien mis à false avant de charger
+    console.log("Chargement de la nouvelle station:", station.name, "URL:", station.url);
     
-    // Toujours pauser l'audio actuel avant de changer la source
+    // Mettre à jour l'état immédiatement pour feedback utilisateur
+    setIsLoading(true);
+    setIsPlaying(false);
+    
+    // Toujours arrêter la lecture en cours
     audioRef.current.pause();
     
-    // Vider complètement la source actuelle
+    // Nettoyer complètement la source
     audioRef.current.src = "";
+    // Forcer le déchargement des ressources audio
     audioRef.current.load();
     
-    console.log("Chargement de la nouvelle station:", station.name, "URL:", station.url);
+    // Enregistrer l'URL actuelle
     lastUrlRef.current = station.url;
     
-    // Petit délai pour assurer une transition propre entre les états
+    // Court délai pour assurer que l'audio précédent est bien déchargé
     setTimeout(() => {
       if (audioRef.current && lastUrlRef.current === station.url) {
-        // Définir la nouvelle source et charger
+        // Définir la nouvelle source
         audioRef.current.src = station.url;
         audioRef.current.load();
         
+        // Tenter la lecture
         const playPromise = audioRef.current.play();
+        
         if (playPromise !== undefined) {
           playPromise
             .then(() => {
@@ -52,7 +58,7 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
             });
         }
       }
-    }, 300); // Augmentation du délai pour une transition plus sûre
+    }, 100); // Délai réduit mais suffisant pour la transition
   };
   
   const togglePlayPause = (currentStation: RadioStation | null) => {
@@ -61,9 +67,13 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
     if (audioRef.current.paused) {
       setIsLoading(true);
       
-      // Si la source est vide ou a changé, la définir
-      if (!audioRef.current.src || audioRef.current.src === '') {
-        console.log("Définition de la source:", currentStation.url);
+      // Vérifier si la source actuelle correspond à la station
+      const currentSource = audioRef.current.src;
+      const stationSource = currentStation.url;
+      
+      // Si la source ne correspond pas, la définir
+      if (!currentSource || !currentSource.includes(stationSource)) {
+        console.log("Mise à jour de la source audio:", currentStation.url);
         audioRef.current.src = currentStation.url;
         audioRef.current.load();
       }

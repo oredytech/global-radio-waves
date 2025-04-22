@@ -36,10 +36,11 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
       togglePlayPause();
     } else {
       console.log("Chargement d'une nouvelle station:", station.name);
+      // Charger directement la nouvelle station, ce qui arrêtera l'ancienne
       loadStation(station);
     }
     
-    // Navigate to station page
+    // Navigue vers la page de la station
     navigate(`/station/${stationSlug}`);
   };
   

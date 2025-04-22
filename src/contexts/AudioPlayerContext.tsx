@@ -28,7 +28,7 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
   
   const audioRef = useAudioElement(volume);
   
-  // Use the hooks but don't assign their return values
+  // Utiliser les hooks mais ne pas assigner leurs valeurs de retour
   useStationPersistence(currentStation);
   useStationsFetching();
   
@@ -38,7 +38,7 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
     setIsPlaying
   });
 
-  // Load saved station on mount
+  // Charger la station sauvegardée au montage
   useEffect(() => {
     const savedStationJson = localStorage.getItem('currentRadioStation');
     if (savedStationJson) {
@@ -47,7 +47,7 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
         if (savedStation) {
           console.log("Station récupérée du stockage local:", savedStation.name);
           setCurrentStation(savedStation);
-          // We load the station but don't auto-play it
+          // Nous chargeons la station mais ne la jouons pas automatiquement
         }
       } catch (e) {
         console.error("Error parsing saved station:", e);
@@ -55,7 +55,7 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
     }
   }, []);
 
-  // Setup audio event listeners
+  // Configurer les écouteurs d'événements audio
   useEffect(() => {
     if (!audioRef.current) return;
 
