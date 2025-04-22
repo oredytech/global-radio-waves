@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { RadioStation } from '@/services/radioService';
 import { toast } from "sonner";
 
@@ -10,21 +10,29 @@ interface UsePlayPauseLogicProps {
 }
 
 export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UsePlayPauseLogicProps) => {
+  // Gardons une trace de la dernière URL pour éviter les rechargements inutiles
+  const lastUrlRef = useRef<string | null>(null);
+
   const loadStation = (station: RadioStation) => {
     if (!audioRef.current) return;
     
     setIsLoading(true);
+    setIsPlaying(false); // Assurons-nous que l'état isPlaying est bien mis à false avant de charger
     
-    // Always pause the current audio first before changing source
+    // Toujours pauser l'audio actuel avant de changer la source
     audioRef.current.pause();
     
-    // Clear the current source
+    // Vider complètement la source actuelle
     audioRef.current.src = "";
+    audioRef.current.load();
     
-    // Small timeout to ensure proper state transitions
+    console.log("Chargement de la nouvelle station:", station.name, "URL:", station.url);
+    lastUrlRef.current = station.url;
+    
+    // Petit délai pour assurer une transition propre entre les états
     setTimeout(() => {
-      if (audioRef.current) {
-        // Set the new source
+      if (audioRef.current && lastUrlRef.current === station.url) {
+        // Définir la nouvelle source et charger
         audioRef.current.src = station.url;
         audioRef.current.load();
         
@@ -32,18 +40,19 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
         if (playPromise !== undefined) {
           playPromise
             .then(() => {
+              console.log("Lecture réussie pour", station.name);
               setIsPlaying(true);
               setIsLoading(false);
             })
             .catch((error) => {
-              console.error("Error playing audio:", error);
+              console.error("Erreur de lecture audio:", error);
               setIsLoading(false);
               setIsPlaying(false);
-              toast.error("Could not play this station. Please try another one.");
+              toast.error("Impossible de lire cette station. Essayez-en une autre.");
             });
         }
       }
-    }, 100);
+    }, 300); // Augmentation du délai pour une transition plus sûre
   };
   
   const togglePlayPause = (currentStation: RadioStation | null) => {
@@ -52,8 +61,9 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
     if (audioRef.current.paused) {
       setIsLoading(true);
       
-      // If source is empty or has changed, set it
+      // Si la source est vide ou a changé, la définir
       if (!audioRef.current.src || audioRef.current.src === '') {
+        console.log("Définition de la source:", currentStation.url);
         audioRef.current.src = currentStation.url;
         audioRef.current.load();
       }
@@ -62,17 +72,19 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
+            console.log("Lecture réussie après togglePlayPause");
             setIsPlaying(true);
             setIsLoading(false);
           })
           .catch((error) => {
-            console.error("Error playing audio:", error);
+            console.error("Erreur de lecture audio:", error);
             setIsLoading(false);
             setIsPlaying(false);
-            toast.error("Could not play this station. Please try again.");
+            toast.error("Impossible de lire cette station. Essayez à nouveau.");
           });
       }
     } else {
+      console.log("Pause de la lecture");
       audioRef.current.pause();
       setIsPlaying(false);
     }

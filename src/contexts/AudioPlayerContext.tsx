@@ -45,6 +45,7 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
       try {
         const savedStation = JSON.parse(savedStationJson);
         if (savedStation) {
+          console.log("Station récupérée du stockage local:", savedStation.name);
           setCurrentStation(savedStation);
           // We load the station but don't auto-play it
         }
@@ -61,30 +62,42 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
     return setupAudioEventListeners(
       audioRef.current,
       () => {
+        console.log("Événement playing déclenché");
         setIsPlaying(true);
         setIsLoading(false);
       },
-      () => setIsPlaying(false),
       () => {
+        console.log("Événement pause déclenché");
+        setIsPlaying(false);
+      },
+      () => {
+        console.log("Événement error déclenché");
         setIsLoading(false);
         setIsPlaying(false);
-        toast.error("Error playing this station. Please try another one.");
+        toast.error("Erreur lors de la lecture de cette station. Essayez-en une autre.");
       },
-      () => setIsLoading(true)
+      () => {
+        console.log("Événement waiting déclenché");
+        setIsLoading(true);
+      }
     );
   }, [audioRef.current]);
   
   const loadStation = (station: RadioStation) => {
+    console.log("Chargement de la station:", station.name);
+    // S'assurer que nous mettons à jour l'état actuel avant de charger l'audio
     setCurrentStation(station);
     handleLoadStation(station);
   };
   
   const togglePlayPause = () => {
+    console.log("Toggle play/pause pour:", currentStation?.name);
     handleTogglePlayPause(currentStation);
   };
   
   const setVolume = (newVolume: number) => {
     if (!audioRef.current) return;
+    console.log("Volume ajusté à:", newVolume);
     audioRef.current.volume = newVolume;
     setVolumeState(newVolume);
   };

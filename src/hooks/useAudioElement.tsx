@@ -1,23 +1,37 @@
 
 import { useEffect, useRef } from 'react';
-import { toast } from "sonner";
 
 export const useAudioElement = (volume: number) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Create audio element on component mount
-    audioRef.current = new Audio();
-    audioRef.current.volume = volume;
-    audioRef.current.preload = "auto";
-
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = "";
-      }
-    };
+    // Créer l'élément audio au montage du composant
+    if (!audioRef.current) {
+      console.log("Création d'un nouvel élément audio");
+      audioRef.current = new Audio();
+      audioRef.current.volume = volume;
+      audioRef.current.preload = "auto";
+      
+      // Important: s'assurer que l'audio est proprement nettoyé
+      const currentAudio = audioRef.current;
+      
+      return () => {
+        console.log("Nettoyage de l'élément audio");
+        if (currentAudio) {
+          currentAudio.pause();
+          currentAudio.src = "";
+          currentAudio.load();
+        }
+      };
+    }
   }, []);
+
+  // Mettre à jour le volume quand il change
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
 
   return audioRef;
 };

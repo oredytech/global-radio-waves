@@ -32,8 +32,10 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
     e.stopPropagation();
     
     if (isCurrentStation) {
+      console.log("Toggle play/pause pour la station actuelle:", station.name);
       togglePlayPause();
     } else {
+      console.log("Chargement d'une nouvelle station:", station.name);
       loadStation(station);
     }
     
