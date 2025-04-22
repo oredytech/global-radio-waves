@@ -18,7 +18,7 @@ interface AudioPlayerContextType {
   isLoading: boolean;
 }
 
-const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(undefined);
+const AudioPlayerContext = createContext<AudioPlayerContextType | null>(null);
 
 export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const [currentStation, setCurrentStation] = useState<RadioStation | null>(null);
@@ -102,7 +102,7 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
     setVolumeState(newVolume);
   };
   
-  const value = {
+  const value: AudioPlayerContextType = {
     currentStation,
     isPlaying,
     volume,
@@ -121,7 +121,7 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
 
 export function useAudioPlayer() {
   const context = useContext(AudioPlayerContext);
-  if (context === undefined) {
+  if (context === null) {
     throw new Error("useAudioPlayer must be used within an AudioPlayerProvider");
   }
   return context;

@@ -1,5 +1,5 @@
 
-import { useState, useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { RadioStation } from '@/services/radioService';
 import { toast } from "sonner";
 
@@ -14,7 +14,7 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
   const lastUrlRef = useRef<string | null>(null);
 
   const loadStation = (station: RadioStation) => {
-    if (!audioRef.current) return;
+    if (!audioRef.current || !station) return;
     
     console.log("Chargement de la nouvelle station:", station.name, "URL:", station.url);
     
@@ -58,7 +58,7 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
             });
         }
       }
-    }, 100); // Délai réduit mais suffisant pour la transition
+    }, 50); // Délai réduit au minimum pour transition rapide
   };
   
   const togglePlayPause = (currentStation: RadioStation | null) => {

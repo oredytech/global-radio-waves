@@ -47,8 +47,8 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AudioPlayerProvider>
+      <AudioPlayerProvider>
+        <BrowserRouter>
           <TooltipProvider>
             <Toaster />
             <Sonner />
@@ -82,8 +82,8 @@ const App = () => {
               />
             </div>
           </TooltipProvider>
-        </AudioPlayerProvider>
-      </BrowserRouter>
+        </BrowserRouter>
+      </AudioPlayerProvider>
     </QueryClientProvider>
   );
 };
