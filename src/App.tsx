@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,8 +17,8 @@ import RadioPlayer from "@/components/RadioPlayer";
 import StationDetail from "./pages/StationDetail";
 import { useState } from "react";
 import MenuDrawer from "@/components/MenuDrawer";
+import About from "./pages/About";
 
-// Create QueryClient instance once outside of component
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
