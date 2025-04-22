@@ -19,6 +19,7 @@ import StationDetail from "./pages/StationDetail";
 import { useState } from "react";
 import MenuDrawer from "@/components/MenuDrawer";
 
+// Create QueryClient instance once outside of component
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -46,11 +47,11 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AudioPlayerProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+      <BrowserRouter>
+        <AudioPlayerProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
             <div className="flex flex-col min-h-screen">
               <Header
                 searchQuery={searchQuery}
@@ -80,9 +81,9 @@ const App = () => {
                 selectedContinent={selectedContinent}
               />
             </div>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AudioPlayerProvider>
+          </TooltipProvider>
+        </AudioPlayerProvider>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 };

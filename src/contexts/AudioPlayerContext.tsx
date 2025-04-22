@@ -102,18 +102,18 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
     setVolumeState(newVolume);
   };
   
+  const value = {
+    currentStation,
+    isPlaying,
+    volume,
+    loadStation,
+    togglePlayPause,
+    setVolume,
+    isLoading,
+  };
+  
   return (
-    <AudioPlayerContext.Provider
-      value={{
-        currentStation,
-        isPlaying,
-        volume,
-        loadStation,
-        togglePlayPause,
-        setVolume,
-        isLoading,
-      }}
-    >
+    <AudioPlayerContext.Provider value={value}>
       {children}
     </AudioPlayerContext.Provider>
   );
