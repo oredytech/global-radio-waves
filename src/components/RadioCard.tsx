@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Play, Pause } from "lucide-react";
 import { RadioStation } from "@/services/radioService";
@@ -71,6 +72,8 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
               isCurrentStation && isPlaying ? "bg-gowera-highlight text-black" : "bg-gowera-highlight text-black"
             )}
             onClick={handlePlayClick}
+            aria-label={isCurrentStation && isPlaying ? "Pause" : "Play"}
+            data-station-id={station.id}
           >
             {isCurrentStation && isPlaying ? (
               <Pause className="m-auto" />
