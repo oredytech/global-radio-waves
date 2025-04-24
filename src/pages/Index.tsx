@@ -94,8 +94,14 @@ const Index: React.FC<IndexProps> = ({ selectedContinent }) => {
   const getTabsToShow = () => {
     const tabs = [
       <TabsTrigger key="popular" value="popular">Stations populaires</TabsTrigger>,
-      <TabsTrigger key="africa" value="africa">Afrique</TabsTrigger>
     ];
+    
+    // Ajoutez l'onglet Afrique seulement s'il a été sélectionné
+    if (selectedContinent === "Afrique") {
+      tabs.push(
+        <TabsTrigger key="africa" value="africa">Afrique</TabsTrigger>
+      );
+    }
     
     // N'ajoutez l'onglet de continent que si ce n'est pas l'Afrique
     if (selectedContinent && selectedContinent !== "Afrique") {
