@@ -1,11 +1,16 @@
+
 import React, { useState, useEffect } from "react";
 import StationGrid from "@/components/StationGrid";
-import { RadioStation, fetchTopStations, searchStations, fetchStationsByContinent } from "@/services/radioService";
+import { RadioStation, fetchTopStations, searchStations, fetchStationsByContinent, fetchAfricanStations } from "@/services/radioService";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Loader2, Globe } from "lucide-react";
+import { Globe } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const Index = () => {
+interface IndexProps {
+  selectedContinent: string | null;
+}
+
+const Index: React.FC<IndexProps> = ({ selectedContinent }) => {
   const [stations, setStations] = useState<RadioStation[]>([]);
   const [africanStations, setAfricanStations] = useState<RadioStation[]>([]);
   const [continentStations, setContinentStations] = useState<RadioStation[]>([]);
@@ -14,7 +19,6 @@ const Index = () => {
   const [isLoadingAfrican, setIsLoadingAfrican] = useState(false);
   const [isLoadingContinent, setIsLoadingContinent] = useState(false);
   const [activeTab, setActiveTab] = useState("popular");
-  const [selectedContinent, setSelectedContinent] = useState<string | null>(null);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const continentMapping: Record<string, string> = {
