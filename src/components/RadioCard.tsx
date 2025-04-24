@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Play, Pause } from "lucide-react";
 import { RadioStation } from "@/services/radioService";
@@ -36,11 +35,10 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
       togglePlayPause();
     } else {
       console.log("Chargement d'une nouvelle station:", station.name);
-      // Charger directement la nouvelle station, ce qui arrêtera l'ancienne
       loadStation(station);
     }
     
-    // Navigue vers la page de la station
+    // Navigation vers la page de la station
     navigate(`/station/${stationSlug}`);
   };
   
