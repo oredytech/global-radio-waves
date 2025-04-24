@@ -1,17 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import StationGrid from "@/components/StationGrid";
-import {
-  RadioStation,
-  fetchTopStations,
-  searchStations,
-  fetchAfricanStations,
-  fetchStationsByContinent
-} from "@/services/radioService";
+import { RadioStation, fetchTopStations, searchStations, fetchStationsByContinent } from "@/services/radioService";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Loader2, Globe } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [stations, setStations] = useState<RadioStation[]>([]);
@@ -72,7 +64,8 @@ const Index = () => {
   }, [activeTab]);
 
   useEffect(() => {
-    if (selectedContinent && activeTab === "continent") {
+    if (selectedContinent) {
+      setActiveTab("continent");
       const fetchContinentStations = async () => {
         setIsLoadingContinent(true);
         try {
@@ -87,15 +80,16 @@ const Index = () => {
       };
       fetchContinentStations();
     }
-  }, [selectedContinent, activeTab]);
+  }, [selectedContinent]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background pb-24">
       <main className="flex-1 container px-4 py-6 md:px-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-          <TabsList className="grid w-full grid-cols-2 sm:w-[400px]">
+          <TabsList className="grid w-full grid-cols-3 sm:w-[600px]">
             <TabsTrigger value="popular">Stations populaires</TabsTrigger>
             <TabsTrigger value="africa">Afrique</TabsTrigger>
+            {selectedContinent && <TabsTrigger value="continent">{selectedContinent}</TabsTrigger>}
           </TabsList>
 
           <TabsContent value="popular">
@@ -127,17 +121,19 @@ const Index = () => {
 
           <TabsContent value="continent">
             {selectedContinent && (
-              <div className="flex items-center gap-2 mb-6">
-                <Globe className="text-gowera-highlight" />
-                <h2 className="text-2xl font-bold text-white">Radios - {selectedContinent}</h2>
-              </div>
+              <>
+                <div className="flex items-center gap-2 mb-6">
+                  <Globe className="text-gowera-highlight" />
+                  <h2 className="text-2xl font-bold text-white">Radios - {selectedContinent}</h2>
+                </div>
+                <StationGrid
+                  stations={continentStations}
+                  loading={isLoadingContinent}
+                  emptyTitle="Aucune station trouvée"
+                  emptySubtitle="Essayez plus tard ou vérifiez votre connexion"
+                />
+              </>
             )}
-            <StationGrid
-              stations={continentStations}
-              loading={isLoadingContinent}
-              emptyTitle="Aucune station trouvée"
-              emptySubtitle="Essayez plus tard ou vérifiez votre connexion"
-            />
           </TabsContent>
         </Tabs>
       </main>

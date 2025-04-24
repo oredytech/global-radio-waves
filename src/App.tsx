@@ -59,7 +59,7 @@ const App = () => {
               />
               <main className="flex-grow">
                 <Routes>
-                  <Route path="/" element={<Index />} />
+                  <Route path="/" element={<Index selectedContinent={selectedContinent} />} />
                   <Route path="/news" element={<News />} />
                   <Route path="/countries" element={<Countries />} />
                   <Route path="/categories" element={<Categories />} />
