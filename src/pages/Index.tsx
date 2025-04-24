@@ -69,31 +69,50 @@ const Index: React.FC<IndexProps> = ({ selectedContinent }) => {
 
   useEffect(() => {
     if (selectedContinent) {
-      setActiveTab("continent");
-      const fetchContinentStations = async () => {
-        setIsLoadingContinent(true);
-        try {
-          const englishName = continentMapping[selectedContinent] || selectedContinent;
-          const result = await fetchStationsByContinent(englishName, 50);
-          setContinentStations(result);
-        } catch (error) {
-          console.error(`Error fetching stations for ${selectedContinent}:`, error);
-        } finally {
-          setIsLoadingContinent(false);
-        }
-      };
-      fetchContinentStations();
+      setActiveTab(selectedContinent === "Afrique" ? "africa" : "continent");
+      
+      // Ne chargez les stations du continent que si ce n'est pas l'Afrique
+      // (car l'Afrique a son propre onglet et ses données sont déjà chargées séparément)
+      if (selectedContinent !== "Afrique") {
+        const fetchContinentStations = async () => {
+          setIsLoadingContinent(true);
+          try {
+            const englishName = continentMapping[selectedContinent] || selectedContinent;
+            const result = await fetchStationsByContinent(englishName, 50);
+            setContinentStations(result);
+          } catch (error) {
+            console.error(`Error fetching stations for ${selectedContinent}:`, error);
+          } finally {
+            setIsLoadingContinent(false);
+          }
+        };
+        fetchContinentStations();
+      }
     }
   }, [selectedContinent]);
+
+  const getTabsToShow = () => {
+    const tabs = [
+      <TabsTrigger key="popular" value="popular">Stations populaires</TabsTrigger>,
+      <TabsTrigger key="africa" value="africa">Afrique</TabsTrigger>
+    ];
+    
+    // N'ajoutez l'onglet de continent que si ce n'est pas l'Afrique
+    if (selectedContinent && selectedContinent !== "Afrique") {
+      tabs.push(
+        <TabsTrigger key="continent" value="continent">{selectedContinent}</TabsTrigger>
+      );
+    }
+    
+    return tabs;
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background pb-24">
       <main className="flex-1 container px-4 py-6 md:px-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-          <TabsList className="grid w-full grid-cols-3 sm:w-[600px]">
-            <TabsTrigger value="popular">Stations populaires</TabsTrigger>
-            <TabsTrigger value="africa">Afrique</TabsTrigger>
-            {selectedContinent && <TabsTrigger value="continent">{selectedContinent}</TabsTrigger>}
+          <TabsList className="grid w-full grid-cols-2 sm:w-[600px]">
+            {getTabsToShow()}
           </TabsList>
 
           <TabsContent value="popular">
@@ -124,7 +143,7 @@ const Index: React.FC<IndexProps> = ({ selectedContinent }) => {
           </TabsContent>
 
           <TabsContent value="continent">
-            {selectedContinent && (
+            {selectedContinent && selectedContinent !== "Afrique" && (
               <>
                 <div className="flex items-center gap-2 mb-6">
                   <Globe className="text-gowera-highlight" />
