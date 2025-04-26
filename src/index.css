@@ -99,7 +99,7 @@
 
 @layer components {
   .radio-card {
-    @apply bg-white/20 backdrop-blur-md rounded-xl hover:bg-white/30 transition-colors duration-300 overflow-hidden;
+    @apply bg-gowera-surface rounded-lg hover:bg-muted/40 transition-colors duration-300 overflow-hidden;
   }
   
   .radio-playing {
@@ -107,7 +107,7 @@
   }
   
   .player-container {
-    @apply fixed bottom-16 left-0 right-0 bg-black/80 backdrop-blur-md border-t border-white/10 z-50;
+    @apply fixed bottom-16 left-0 right-0 bg-black/80 backdrop-blur-md border-t border-white/10 shadow-lg z-50;
   }
   
   .pb-safe-area {
@@ -117,22 +117,5 @@
   .pt-safe-area {
     padding-top: env(safe-area-inset-top, 0);
   }
-}
-
-/* Ajout des styles spécifiques pour la barre de navigation */
-.bottom-nav {
-  @apply fixed bottom-0 left-0 right-0 bg-white py-3 px-4 flex justify-around items-center z-50;
-}
-
-.bottom-nav-item {
-  @apply flex flex-col items-center gap-1 text-gray-500 hover:text-blue-500 transition-colors;
-}
-
-.bottom-nav-item.active {
-  @apply text-blue-500;
-}
-
-.bottom-nav-label {
-  @apply text-[10px] font-medium;
 }
 

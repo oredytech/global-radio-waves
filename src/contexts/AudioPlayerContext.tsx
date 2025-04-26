@@ -18,7 +18,7 @@ interface AudioPlayerContextType {
   isLoading: boolean;
 }
 
-const AudioPlayerContext = createContext<AudioPlayerContextType | null>(null);
+const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(undefined);
 
 export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const [currentStation, setCurrentStation] = useState<RadioStation | null>(null);
@@ -28,7 +28,7 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
   
   const audioRef = useAudioElement(volume);
   
-  // Utiliser les hooks mais ne pas assigner leurs valeurs de retour
+  // Use the hooks but don't assign their return values
   useStationPersistence(currentStation);
   useStationsFetching();
   
@@ -38,16 +38,15 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
     setIsPlaying
   });
 
-  // Charger la station sauvegardée au montage
+  // Load saved station on mount
   useEffect(() => {
     const savedStationJson = localStorage.getItem('currentRadioStation');
     if (savedStationJson) {
       try {
         const savedStation = JSON.parse(savedStationJson);
         if (savedStation) {
-          console.log("Station récupérée du stockage local:", savedStation.name);
           setCurrentStation(savedStation);
-          // Nous chargeons la station mais ne la jouons pas automatiquement
+          // We load the station but don't auto-play it
         }
       } catch (e) {
         console.error("Error parsing saved station:", e);
@@ -55,65 +54,53 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
     }
   }, []);
 
-  // Configurer les écouteurs d'événements audio
+  // Setup audio event listeners
   useEffect(() => {
     if (!audioRef.current) return;
 
     return setupAudioEventListeners(
       audioRef.current,
       () => {
-        console.log("Événement playing déclenché");
         setIsPlaying(true);
         setIsLoading(false);
       },
+      () => setIsPlaying(false),
       () => {
-        console.log("Événement pause déclenché");
-        setIsPlaying(false);
-      },
-      () => {
-        console.log("Événement error déclenché");
         setIsLoading(false);
         setIsPlaying(false);
-        toast.error("Erreur lors de la lecture de cette station. Essayez-en une autre.");
+        toast.error("Error playing this station. Please try another one.");
       },
-      () => {
-        console.log("Événement waiting déclenché");
-        setIsLoading(true);
-      }
+      () => setIsLoading(true)
     );
   }, [audioRef.current]);
   
   const loadStation = (station: RadioStation) => {
-    console.log("Chargement de la station:", station.name);
-    // S'assurer que nous mettons à jour l'état actuel avant de charger l'audio
     setCurrentStation(station);
     handleLoadStation(station);
   };
   
   const togglePlayPause = () => {
-    console.log("Toggle play/pause pour:", currentStation?.name);
     handleTogglePlayPause(currentStation);
   };
   
   const setVolume = (newVolume: number) => {
     if (!audioRef.current) return;
-    console.log("Volume ajusté à:", newVolume);
     audioRef.current.volume = newVolume;
     setVolumeState(newVolume);
   };
   
-  const value: AudioPlayerContextType = {
-    currentStation,
-    isPlaying,
-    volume,
-    loadStation,
-    togglePlayPause,
-    setVolume,
-    isLoading,
-  };
-  
   return (
-    <AudioPlayerContext.Provider value={value}>
+    <AudioPlayerContext.Provider
+      value={{
+        currentStation,
+        isPlaying,
+        volume,
+        loadStation,
+        togglePlayPause,
+        setVolume,
+        isLoading,
+      }}
+    >
       {children}
     </AudioPlayerContext.Provider>
   );
@@ -121,7 +108,7 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
 
 export function useAudioPlayer() {
   const context = useContext(AudioPlayerContext);
-  if (context === null) {
+  if (context === undefined) {
     throw new Error("useAudioPlayer must be used within an AudioPlayerProvider");
   }
   return context;

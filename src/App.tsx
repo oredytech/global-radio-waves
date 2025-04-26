@@ -17,8 +17,6 @@ import Index from "./pages/Index";
 import RadioPlayer from "@/components/RadioPlayer";
 import StationDetail from "./pages/StationDetail";
 import { useState } from "react";
-import MenuDrawer from "@/components/MenuDrawer";
-import About from "./pages/About";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,27 +29,19 @@ const queryClient = new QueryClient({
 
 const App = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedContinent, setSelectedContinent] = useState<string | null>(null);
   
   const handleMenuClick = () => {
-    setDrawerOpen(true);
+    // Menu handling can be implemented here if needed
+    console.log("Menu clicked from App");
   };
-  
-  const handleContinentClick = (continent: string) => {
-    setSelectedContinent(continent);
-    setDrawerOpen(false);
-  };
-
-  const continents = ['Afrique', 'Europe', 'Amérique du Nord', 'Amérique du Sud', 'Asie', 'Océanie'];
 
   return (
     <QueryClientProvider client={queryClient}>
       <AudioPlayerProvider>
-        <BrowserRouter>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
             <div className="flex flex-col min-h-screen">
               <Header
                 searchQuery={searchQuery}
@@ -65,7 +55,6 @@ const App = () => {
                   <Route path="/countries" element={<Countries />} />
                   <Route path="/categories" element={<Categories />} />
                   <Route path="/contact" element={<Contact />} />
-                  <Route path="/about" element={<About />} />
                   <Route path="/station/:stationId" element={<StationDetail />} />
                   <Route path="/radio/:stationId" element={<StationDetail />} />
                   <Route path="*" element={<NotFound />} />
@@ -74,16 +63,9 @@ const App = () => {
               <Footer />
               <RadioPlayer />
               <NavBar />
-              <MenuDrawer
-                open={drawerOpen}
-                onOpenChange={setDrawerOpen}
-                onContinentClick={handleContinentClick}
-                continents={continents}
-                selectedContinent={selectedContinent}
-              />
             </div>
-          </TooltipProvider>
-        </BrowserRouter>
+          </BrowserRouter>
+        </TooltipProvider>
       </AudioPlayerProvider>
     </QueryClientProvider>
   );

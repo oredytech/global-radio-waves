@@ -2,10 +2,10 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import ArticleCard from "@/components/ArticleCard";
-import { WordPressArticle } from "@/services/newsService";
+import { Article } from "@/services/newsService";
 
 interface StationArticlesProps {
-  articles: WordPressArticle[];
+  articles: Article[];
 }
 
 const StationArticles: React.FC<StationArticlesProps> = ({ articles }) => (

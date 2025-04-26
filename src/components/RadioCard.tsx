@@ -32,14 +32,12 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
     e.stopPropagation();
     
     if (isCurrentStation) {
-      console.log("Toggle play/pause pour la station actuelle:", station.name);
       togglePlayPause();
     } else {
-      console.log("Chargement d'une nouvelle station:", station.name);
       loadStation(station);
     }
     
-    // Navigation vers la page de la station
+    // Navigate to station page
     navigate(`/station/${stationSlug}`);
   };
   
@@ -72,8 +70,6 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
               isCurrentStation && isPlaying ? "bg-gowera-highlight text-black" : "bg-gowera-highlight text-black"
             )}
             onClick={handlePlayClick}
-            aria-label={isCurrentStation && isPlaying ? "Pause" : "Play"}
-            data-station-id={station.id}
           >
             {isCurrentStation && isPlaying ? (
               <Pause className="m-auto" />
