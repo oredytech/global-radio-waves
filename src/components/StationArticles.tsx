@@ -2,7 +2,7 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import ArticleCard from "@/components/ArticleCard";
-import { Article } from "@/services/newsService";
+import { Article } from "@/services/types/radioTypes";
 
 interface StationArticlesProps {
   articles: Article[];

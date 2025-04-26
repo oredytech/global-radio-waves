@@ -1,3 +1,4 @@
+
 export interface RadioStation {
   id: string;
   name: string;
@@ -22,6 +23,7 @@ export interface CategoryInfo {
 }
 
 export interface Article {
+  id?: string; // Added id field
   title: string;
   description: string;
   link: string;
