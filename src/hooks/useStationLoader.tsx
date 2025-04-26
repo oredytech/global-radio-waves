@@ -6,7 +6,7 @@ import { RadioStation } from "@/services/radioService";
 import { findStationBySlug, generateSlug } from "@/utils/stationUtils";
 
 export const useStationLoader = (
-  stationId: string | undefined,
+  stationSlug: string | undefined,
   currentStation: RadioStation | null,
   loadStation: (station: RadioStation) => void
 ) => {
@@ -15,12 +15,12 @@ export const useStationLoader = (
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!stationId) {
+    if (!stationSlug) {
       navigate("/");
       return;
     }
 
-    if (currentStation && generateSlug(currentStation.name) === stationId) {
+    if (currentStation && generateSlug(currentStation.name) === stationSlug) {
       setStation(currentStation);
       setIsLoading(false);
       return;
@@ -33,7 +33,7 @@ export const useStationLoader = (
         
         if (savedStations) {
           const stations = JSON.parse(savedStations) as RadioStation[];
-          const foundStation = findStationBySlug(stations, stationId);
+          const foundStation = findStationBySlug(stations, stationSlug);
 
           if (foundStation) {
             setStation(foundStation);
@@ -44,7 +44,7 @@ export const useStationLoader = (
 
         // If not found in localStorage, fetch from API
         const response = await fetch(
-          `https://de1.api.radio-browser.info/json/stations/byname/${stationId.replace(/-/g, " ")}?limit=5`
+          `https://de1.api.radio-browser.info/json/stations/byname/${stationSlug.replace(/-/g, " ")}?limit=5`
         );
         const data = await response.json();
 
@@ -64,14 +64,7 @@ export const useStationLoader = (
     };
 
     loadStationData();
-  }, [stationId, currentStation, navigate]);
-
-  useEffect(() => {
-    // Auto-load the station when found, but don't auto-play
-    if (station && (!currentStation || station.id !== currentStation.id)) {
-      loadStation(station);
-    }
-  }, [station, currentStation, loadStation]);
+  }, [stationSlug, currentStation, navigate]);
 
   return { station, isLoading };
 };

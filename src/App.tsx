@@ -48,7 +48,7 @@ const App = () => {
                   <Route path="/news" element={<News />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/world-map" element={<WorldMap />} />
-                  <Route path="/station-player/:stationId" element={<StationPlayerPage />} />
+                  <Route path="/station/:stationSlug" element={<StationPlayerPage />} />
                   <Route path="/genres" element={<GenresExplorer />} />
                   <Route path="/stations/genre/:genreName" element={<Categories />} />
                   <Route path="*" element={<NotFound />} />

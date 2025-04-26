@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
@@ -17,7 +16,7 @@ import { useLocalTime } from "@/hooks/useLocalTime";
 import { useNavigate } from "react-router-dom";
 
 const StationPlayerPage: React.FC = () => {
-  const { stationId } = useParams<{ stationId: string }>();
+  const { stationSlug } = useParams<{ stationSlug: string }>();
   const navigate = useNavigate();
   const { 
     currentStation, 
@@ -31,7 +30,7 @@ const StationPlayerPage: React.FC = () => {
   const { favorites, toggleFavorite, isFavorite } = useFavorites();
 
   // Use our custom hooks
-  const { station, isLoading } = useStationLoader(stationId, currentStation, loadStation);
+  const { station, isLoading } = useStationLoader(stationSlug, currentStation, loadStation);
   const similarStations = useSimilarStations(station);
   const localTime = useLocalTime(station);
 
@@ -60,14 +59,12 @@ const StationPlayerPage: React.FC = () => {
   const isStationFavorite = isFavorite(station.id);
   const countryFlag = station.country ? getCountryFlag(station.country.substring(0, 2)) : "🌍";
 
-  // Create a function that will handle togglePlayPause for this specific station
   const handlePlayPause = () => {
     togglePlayPause();
   };
 
   return (
     <div className="relative min-h-screen pb-32 pt-4">
-      {/* Background with blur effect */}
       <div 
         className="fixed inset-0 z-0 opacity-20 bg-cover bg-center blur-xl"
         style={{ 
@@ -77,10 +74,8 @@ const StationPlayerPage: React.FC = () => {
         }}
       />
       
-      {/* Dark overlay */}
       <div className="fixed inset-0 z-0 bg-gradient-to-b from-black/80 via-gowera-background/90 to-gowera-background" />
       
-      {/* Content */}
       <div className="container mx-auto px-4 relative z-10 pt-6 pb-20">
         <StationHeader 
           station={station}

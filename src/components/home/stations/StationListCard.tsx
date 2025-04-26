@@ -17,7 +17,7 @@ const StationListCard: React.FC<StationListCardProps> = ({ station }) => {
   const handleStationClick = (e: React.MouseEvent) => {
     e.preventDefault();
     const stationSlug = generateSlug(station.name);
-    navigate(`/station-player/${stationSlug}`);
+    navigate(`/station/${stationSlug}`);
   };
 
   return (

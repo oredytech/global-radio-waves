@@ -13,7 +13,7 @@ const StationImageCard: React.FC<StationImageCardProps> = ({ station }) => {
 
   const handleStationClick = () => {
     const stationSlug = generateSlug(station.name);
-    navigate(`/station-player/${stationSlug}`);
+    navigate(`/station/${stationSlug}`);
   };
 
   return (
