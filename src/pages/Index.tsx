@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import ExplorationButtons from "@/components/ExplorationButtons";
+import SeeAllButton from "@/components/SeeAllButton";
 
 const Index = () => {
   const [stations, setStations] = useState<RadioStation[]>([]);
@@ -182,9 +183,7 @@ const Index = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold text-white">Radios en tendance</h2>
-            <Button variant="link" className="text-gowera-highlight py-1 h-auto flex items-center">
-              Voir tout <ChevronRight size={16} />
-            </Button>
+            <SeeAllButton to="/featured" />
           </div>
 
           {isLoadingFeatured ? (
@@ -233,9 +232,7 @@ const Index = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold text-white">Écoutées récemment</h2>
-            <Button variant="link" className="text-gowera-highlight py-1 h-auto flex items-center">
-              Voir tout <ChevronRight size={16} />
-            </Button>
+            <SeeAllButton to="/recent" />
           </div>
 
           <div className="flex overflow-x-auto space-x-4 pb-4 snap-x">
@@ -266,9 +263,7 @@ const Index = () => {
         <div>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold text-white">Stations populaires</h2>
-            <Button variant="link" className="text-gowera-highlight py-1 h-auto flex items-center">
-              Voir tout <ChevronRight size={16} />
-            </Button>
+            <SeeAllButton to="/popular" />
           </div>
 
           {isLoading ? (
