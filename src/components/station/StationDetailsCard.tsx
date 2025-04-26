@@ -7,9 +7,9 @@ interface StationDetailsCardProps {
 }
 
 const StationDetailsCard: React.FC<StationDetailsCardProps> = ({ station }) => {
-  // Ensure tags is always an array
+  // Ensure tags is always an array - fixed toString() issue
   const tags = Array.isArray(station.tags) ? station.tags : 
-              (station.tags ? [station.tags.toString()] : []);
+              (station.tags ? (typeof station.tags === 'string' ? [station.tags] : []) : []);
   
   // Generate a description if not provided
   const generateDescription = () => {

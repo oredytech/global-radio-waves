@@ -7,9 +7,9 @@ interface StationMetaProps {
 }
 
 const StationMeta: React.FC<StationMetaProps> = ({ station }) => {
-  // Ensure tags is always an array
+  // Ensure tags is always an array - fixed toString() issue
   const tags = Array.isArray(station.tags) ? station.tags : 
-              (station.tags ? [station.tags.toString()] : []);
+              (station.tags ? (typeof station.tags === 'string' ? [station.tags] : []) : []);
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">

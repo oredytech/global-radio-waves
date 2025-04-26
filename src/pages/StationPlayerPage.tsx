@@ -250,9 +250,9 @@ const StationPlayerPage: React.FC = () => {
 
   const defaultImage = "https://placehold.co/800x300/333/888?text=Radio";
   const stationImage = station.favicon || defaultImage;
-  // Ensure tags is always an array, even if it's a string or undefined
+  // Ensure tags is always an array - fixed toString() issue
   const stationTags = Array.isArray(station.tags) ? station.tags : 
-                      (station.tags ? [station.tags.toString()] : []);
+                     (station.tags ? (typeof station.tags === 'string' ? [station.tags] : []) : []);
   const stationLang = station.language || "Non spécifié";
   const isStationFavorite = isFavorite(station.id);
   const countryFlag = station.country ? getCountryFlag(station.country.substring(0, 2)) : "🌍";
