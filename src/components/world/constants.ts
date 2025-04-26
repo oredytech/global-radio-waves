@@ -1,3 +1,4 @@
+
 export const continents = [
   { name: "Tous", value: "all" },
   { name: "Afrique", value: "africa" },
@@ -44,8 +45,8 @@ export const oceaniaCountries = ["Australia", "Fiji", "Kiribati", "Marshall Isla
 
 export const getContinentForCountry = (countryName: string): string => {
   if (africaCountries.some(c => countryName.includes(c))) return "africa";
-  if (asianCountries.some(c => countryName.includes(c))) return "asia";
-  if (europeanCountries.some(c => countryName.includes(c))) return "europe";
+  if (asiaCountries.some(c => countryName.includes(c))) return "asia";
+  if (europeCountries.some(c => countryName.includes(c))) return "europe";
   if (oceaniaCountries.some(c => countryName.includes(c))) return "oceania";
   return "america";
 };

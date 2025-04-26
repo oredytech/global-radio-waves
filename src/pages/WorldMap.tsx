@@ -12,7 +12,7 @@ import IndexHeader from "@/components/IndexHeader";
 import RadioPlayer from "@/components/RadioPlayer";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { toast } from "sonner";
-import { continents, getContinentForCountry } from "@/components/world/constants";
+import { continents, getContinentForCountry, getContinentColor } from "@/components/world/constants";
 import { useCountryFiltering, ExtendedCountryInfo } from "@/hooks/useCountryFiltering";
 import RandomCountryButton from "@/components/world/RandomCountryButton";
 
