@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useFavorites } from "@/hooks/useFavorites";
 
 const RadioPlayer: React.FC = () => {
   const {
@@ -16,9 +17,10 @@ const RadioPlayer: React.FC = () => {
     togglePlayPause,
     setVolume
   } = useAudioPlayer();
+  
   const playerRef = useRef<HTMLDivElement>(null);
-  const [isFavorite, setIsFavorite] = React.useState(false);
-
+  const { toggleFavorite, isFavorite } = useFavorites();
+  
   useEffect(() => {
     // Ensure player stays at bottom of screen, above navbar
     if (playerRef.current) {
@@ -30,39 +32,25 @@ const RadioPlayer: React.FC = () => {
     };
   }, [currentStation]);
 
-  useEffect(() => {
-    if (currentStation) {
-      // Check if station is in favorites
-      const favorites = JSON.parse(localStorage.getItem('favoriteStations') || '[]');
-      const isInFavorites = favorites.some((fav: any) => fav.id === currentStation.id);
-      setIsFavorite(isInFavorites);
-    }
-  }, [currentStation]);
-
   if (!currentStation) {
     return null;
   }
 
-  const toggleFavorite = () => {
+  const toggleFavoriteStation = () => {
     if (!currentStation) return;
+    toggleFavorite(currentStation);
     
-    const favorites = JSON.parse(localStorage.getItem('favoriteStations') || '[]');
-    
-    if (isFavorite) {
-      const updatedFavorites = favorites.filter((station: any) => station.id !== currentStation.id);
-      localStorage.setItem('favoriteStations', JSON.stringify(updatedFavorites));
-      setIsFavorite(false);
+    if (isFavorite(currentStation.id)) {
       toast.success("Station retirée des favoris");
     } else {
-      favorites.push(currentStation);
-      localStorage.setItem('favoriteStations', JSON.stringify(favorites));
-      setIsFavorite(true);
       toast.success("Station ajoutée aux favoris");
     }
   };
 
   const defaultImage = "https://placehold.co/60x60/333/888?text=Radio";
+  const stationImage = currentStation.favicon || defaultImage;
   const isMuted = volume === 0;
+  const stationFavorite = isFavorite(currentStation.id);
 
   return (
     <div 
@@ -74,10 +62,11 @@ const RadioPlayer: React.FC = () => {
     >
       <div className="container mx-auto px-0">
         <div className="flex items-center justify-between">
+          {/* Station info */}
           <div className="flex items-center space-x-4 w-1/3">
             <div className="flex justify-center w-full">
               <img 
-                src={currentStation.favicon || defaultImage} 
+                src={stationImage} 
                 alt={currentStation.name} 
                 className="h-14 w-14 rounded-md object-cover" 
                 onError={e => {
@@ -86,11 +75,12 @@ const RadioPlayer: React.FC = () => {
               />
               <div className="overflow-hidden ml-3">
                 <h3 className="font-medium text-white truncate">{currentStation.name}</h3>
-                <p className="text-xs text-gray-400 truncate">{currentStation.country}</p>
+                <p className="text-xs text-gray-400 truncate">{currentStation.country || "Radio mondiale"}</p>
               </div>
             </div>
           </div>
           
+          {/* Playback controls */}
           <div className="flex items-center justify-center w-1/3">
             <Button 
               variant="ghost" 
@@ -98,6 +88,7 @@ const RadioPlayer: React.FC = () => {
               className="rounded-full hover:bg-white/10 text-white flex items-center justify-center" 
               onClick={togglePlayPause} 
               disabled={isLoading}
+              aria-label={isPlaying ? "Pause" : "Play"}
             >
               {isLoading ? (
                 <Loader2 className="h-8 w-8 animate-spin" />
@@ -109,14 +100,16 @@ const RadioPlayer: React.FC = () => {
             </Button>
           </div>
           
+          {/* Volume and favorite controls */}
           <div className="flex items-center space-x-2 w-1/3 justify-end">
             <Button
               variant="ghost"
               size="icon"
               className="text-white hover:bg-white/10 rounded-full h-8 w-8"
-              onClick={toggleFavorite}
+              onClick={toggleFavoriteStation}
+              aria-label={stationFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
             >
-              {isFavorite ? (
+              {stationFavorite ? (
                 <Heart className="h-5 w-5 fill-red-500 text-red-500" />
               ) : (
                 <Heart className="h-5 w-5" />
@@ -128,6 +121,7 @@ const RadioPlayer: React.FC = () => {
               size="icon" 
               className="text-gray-400 hover:text-white hover:bg-transparent flex items-center justify-center" 
               onClick={() => setVolume(isMuted ? 0.5 : 0)}
+              aria-label={isMuted ? "Activer le son" : "Couper le son"}
             >
               {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
             </Button>
@@ -140,6 +134,7 @@ const RadioPlayer: React.FC = () => {
               onValueChange={values => {
                 setVolume(values[0] / 100);
               }} 
+              aria-label="Volume"
             />
           </div>
         </div>

@@ -45,6 +45,7 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
       try {
         const savedStation = JSON.parse(savedStationJson);
         if (savedStation) {
+          console.log("Loaded saved station:", savedStation.name);
           setCurrentStation(savedStation);
           // We load the station but don't auto-play it
         }
@@ -57,45 +58,63 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
   // Setup audio event listeners
   useEffect(() => {
     if (!audioRef.current) return;
-
+    
+    console.log("Setting up audio event listeners");
+    
     return setupAudioEventListeners(
       audioRef.current,
       () => {
+        console.log("Audio event: playing");
         setIsPlaying(true);
         setIsLoading(false);
       },
-      () => setIsPlaying(false),
       () => {
+        console.log("Audio event: pause");
+        setIsPlaying(false);
+      },
+      () => {
+        console.log("Audio event: error");
         setIsLoading(false);
         setIsPlaying(false);
-        toast.error("Error playing this station. Please try another one.");
+        toast.error("Problème avec cette station. Essayez-en une autre.");
       },
-      () => setIsLoading(true)
+      () => {
+        console.log("Audio event: waiting/buffering");
+        setIsLoading(true);
+      },
+      () => {
+        console.log("Audio event: ended");
+        setIsPlaying(false);
+      }
     );
   }, [audioRef.current]);
   
   const loadStation = (station: RadioStation) => {
-    // Only update if it's a different station or first load
+    console.log("Request to load station:", station.name);
+    
+    // Check if it's a different station or first load
     const isNewStation = !currentStation || station.id !== currentStation.id;
     
     // Always update the current station in state
     setCurrentStation(station);
     
-    // Only call handleLoadStation if it's a new station
     if (isNewStation) {
+      console.log("Loading new station:", station.name);
       handleLoadStation(station);
     } else {
-      // If it's the same station, just toggle play/pause
+      console.log("Same station, toggling play/pause:", station.name);
       togglePlayPause();
     }
   };
   
   const togglePlayPause = () => {
+    console.log("Toggle play/pause for current station");
     handleTogglePlayPause(currentStation);
   };
   
   const setVolume = (newVolume: number) => {
     if (!audioRef.current) return;
+    console.log("Setting volume to:", newVolume);
     audioRef.current.volume = newVolume;
     setVolumeState(newVolume);
   };
