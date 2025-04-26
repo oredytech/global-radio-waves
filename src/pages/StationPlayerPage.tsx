@@ -1,52 +1,19 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { RadioStation } from "@/services/radioService";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { toast } from "sonner";
-import { 
-  Play, 
-  Pause, 
-  Volume2, 
-  VolumeX, 
-  Heart, 
-  HeartOff, 
-  Globe, 
-  Clock, 
-  Loader2,
-  ArrowLeft,
-  Share2 
-} from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { Badge } from "@/components/ui/badge";
 import { fetchStationsByCountry, fetchStationsByTag } from "@/services/stationsService";
-import StationWaveform from "@/components/station/StationWaveform";
 import StationDetailsCard from "@/components/station/StationDetailsCard";
 import StationMetadata from "@/components/station/StationMetadata";
 import SimilarStationsCarousel from "@/components/station/SimilarStationsCarousel";
 import { useFavorites } from "@/hooks/useFavorites";
-
-// Helper functions
-const generateSlug = (name: string) =>
-  name.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
-
-const findStationBySlug = (
-  stations: RadioStation[],
-  slug: string
-): RadioStation | undefined =>
-  stations.find((s) => generateSlug(s.name) === slug);
-
-const getCountryFlag = (countryCode: string) => {
-  // Convert country code to flag emoji (each letter is converted to a regional indicator symbol emoji)
-  if (!countryCode || countryCode.length !== 2) return "🌍";
-  const codePoints = countryCode
-    .toUpperCase()
-    .split("")
-    .map((char) => 127397 + char.charCodeAt(0));
-  return String.fromCodePoint(...codePoints);
-};
+import { findStationBySlug, getCountryFlag } from "@/utils/stationUtils";
+import StationPlayerControls from "@/components/station/StationPlayerControls";
+import StationHeader from "@/components/station/StationHeader";
 
 const StationPlayerPage: React.FC = () => {
   const { stationId } = useParams<{ stationId: string }>();
@@ -78,7 +45,7 @@ const StationPlayerPage: React.FC = () => {
     queryFn: () => fetchStationsByTag(station?.tags[0] || "", 5),
     enabled: !!station?.tags && station.tags.length > 0,
   });
-  
+
   // Filter out current station from similar stations and combine results
   const similarStations = React.useMemo(() => {
     if (!station) return [];
@@ -92,15 +59,13 @@ const StationPlayerPage: React.FC = () => {
       
     return combined.slice(0, 5); // Limit to 5 stations
   }, [similarByCountry, similarByTag, station]);
-  
+
   // Update local time of the station's country
   useEffect(() => {
     if (!station) return;
     
     const updateTime = () => {
       try {
-        // This is a simple approximation as we don't have timezone data
-        // In a real app, you'd use a timezone API or database
         const now = new Date();
         const formatter = new Intl.DateTimeFormat('fr-FR', {
           hour: '2-digit',
@@ -214,21 +179,6 @@ const StationPlayerPage: React.FC = () => {
       toggleFavorite(station);
     }
   };
-  
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: `Écouter ${station?.name} sur GOWERA`,
-        text: `Découvrez ${station?.name} depuis ${station?.country} sur GOWERA - L'application des radios du monde entier`,
-        url: window.location.href,
-      }).catch(err => {
-        console.error('Erreur lors du partage:', err);
-      });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      toast.success("Lien copié dans le presse-papier");
-    }
-  };
 
   if (isLoading) {
     return (
@@ -250,10 +200,8 @@ const StationPlayerPage: React.FC = () => {
 
   const defaultImage = "https://placehold.co/800x300/333/888?text=Radio";
   const stationImage = station.favicon || defaultImage;
-  // Ensure tags is always an array - fixed toString() issue
   const stationTags = Array.isArray(station.tags) ? station.tags : 
                      (station.tags ? (typeof station.tags === 'string' ? [station.tags] : []) : []);
-  const stationLang = station.language || "Non spécifié";
   const isStationFavorite = isFavorite(station.id);
   const countryFlag = station.country ? getCountryFlag(station.country.substring(0, 2)) : "🌍";
 
@@ -274,139 +222,25 @@ const StationPlayerPage: React.FC = () => {
       
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10 pt-6 pb-20">
-        {/* Back button */}
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="text-white mb-6" 
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="mr-1 h-4 w-4" /> Retour
-        </Button>
+        <StationHeader 
+          station={station}
+          stationImage={stationImage}
+          isPlaying={isPlaying}
+          countryFlag={countryFlag}
+          localTime={localTime}
+          stationTags={stationTags}
+        />
         
-        {/* Station header */}
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
-          <div className="relative shrink-0">
-            <img 
-              src={stationImage} 
-              alt={station.name} 
-              className="w-40 h-40 rounded-lg object-cover shadow-xl border border-white/10"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = defaultImage;
-              }}
-            />
-            {isPlaying && (
-              <div className="absolute -top-2 -left-2">
-                <StationWaveform />
-              </div>
-            )}
-          </div>
-          
-          <div className="flex-1 space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge className="bg-white/10 text-white hover:bg-white/20">Radio</Badge>
-              {stationTags.slice(0, 3).map((tag, index) => (
-                <Badge key={index} variant="outline" className="text-white border-white/20">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-            
-            <h1 className="text-4xl font-bold text-white mt-1">{station.name}</h1>
-            
-            <div className="flex items-center text-gray-300">
-              <Globe className="h-4 w-4 mr-1" />
-              <span className="mr-2">{countryFlag}</span>
-              <span>{station.country}</span>
-              
-              {localTime && (
-                <div className="ml-4 flex items-center text-gray-400">
-                  <Clock className="h-4 w-4 mr-1" />
-                  <span>{localTime}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-        
-        {/* Player controls section */}
-        <div className="bg-black/40 backdrop-blur-md rounded-xl p-6 border border-white/10 shadow-xl mb-8">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="flex-shrink-0">
-              <Button 
-                variant="default" 
-                size="lg" 
-                className="h-16 w-16 rounded-full bg-gowera-highlight hover:bg-gowera-highlight/80 text-black" 
-                onClick={handlePlayPause}
-                disabled={playerLoading}
-              >
-                {playerLoading ? (
-                  <Loader2 className="h-8 w-8 animate-spin" />
-                ) : isPlaying ? (
-                  <Pause className="h-8 w-8" />
-                ) : (
-                  <Play className="h-8 w-8 ml-1" />
-                )}
-              </Button>
-            </div>
-            
-            <div className="flex-1 flex flex-col w-full md:w-auto">
-              <div className="text-xl font-semibold text-white mb-1 text-center md:text-left">
-                {isPlaying ? "En lecture" : "Prêt à être écouté"}
-              </div>
-              <div className="text-sm text-gray-400 mb-3 text-center md:text-left">
-                Plongez dans l'univers de {station.name}
-              </div>
-              
-              <div className="flex items-center gap-4">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="text-gray-400 hover:text-white hover:bg-white/10" 
-                  onClick={() => setVolume(volume === 0 ? 0.5 : 0)}
-                >
-                  {volume === 0 ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-                </Button>
-                <div className="flex-1">
-                  <Slider 
-                    className="w-full" 
-                    defaultValue={[volume * 100]} 
-                    value={[volume * 100]}
-                    max={100} 
-                    step={1} 
-                    onValueChange={values => {
-                      setVolume(values[0] / 100);
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className={isStationFavorite ? "text-red-500" : "text-gray-400"} 
-                onClick={handleFavoriteToggle}
-              >
-                {isStationFavorite ? (
-                  <Heart className="h-6 w-6 fill-red-500" />
-                ) : (
-                  <Heart className="h-6 w-6" />
-                )}
-              </Button>
-              
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="text-gray-400" 
-                onClick={handleShare}
-              >
-                <Share2 className="h-5 w-5" />
-              </Button>
-            </div>
-          </div>
-        </div>
+        <StationPlayerControls 
+          station={station}
+          isPlaying={isPlaying}
+          playerLoading={playerLoading}
+          volume={volume}
+          setVolume={setVolume}
+          handlePlayPause={handlePlayPause}
+          isStationFavorite={isStationFavorite}
+          toggleFavorite={handleFavoriteToggle}
+        />
         
         {/* Split content into two columns on larger screens */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
