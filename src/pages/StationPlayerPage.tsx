@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { Loader2 } from "lucide-react";
@@ -33,6 +34,13 @@ const StationPlayerPage: React.FC = () => {
   const { station, isLoading } = useStationLoader(stationSlug, currentStation, loadStation);
   const similarStations = useSimilarStations(station);
   const localTime = useLocalTime(station);
+  
+  // When station is loaded, ensure it's also loaded in the player
+  useEffect(() => {
+    if (station && (!currentStation || currentStation.id !== station.id)) {
+      loadStation(station);
+    }
+  }, [station, currentStation, loadStation]);
 
   if (isLoading) {
     return (
