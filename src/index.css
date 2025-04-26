@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap');
 
 @tailwind base;
@@ -118,7 +119,7 @@
   }
 }
 
-// Ajout des styles spécifiques pour la barre de navigation
+/* Ajout des styles spécifiques pour la barre de navigation */
 .bottom-nav {
   @apply fixed bottom-0 left-0 right-0 bg-white py-3 px-4 flex justify-around items-center z-50;
 }
@@ -134,3 +135,4 @@
 .bottom-nav-label {
   @apply text-[10px] font-medium;
 }
+
