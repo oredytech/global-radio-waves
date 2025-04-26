@@ -60,6 +60,11 @@ const StationPlayerPage: React.FC = () => {
   const isStationFavorite = isFavorite(station.id);
   const countryFlag = station.country ? getCountryFlag(station.country.substring(0, 2)) : "🌍";
 
+  // Create a function that will handle togglePlayPause for this specific station
+  const handlePlayPause = () => {
+    togglePlayPause();
+  };
+
   return (
     <div className="relative min-h-screen pb-32 pt-4">
       {/* Background with blur effect */}
@@ -92,9 +97,9 @@ const StationPlayerPage: React.FC = () => {
           playerLoading={playerLoading}
           volume={volume}
           setVolume={setVolume}
-          handlePlayPause={togglePlayPause}
+          handlePlayPause={handlePlayPause}
           isStationFavorite={isStationFavorite}
-          toggleFavorite={toggleFavorite}
+          toggleFavorite={() => toggleFavorite(station)}
         />
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
