@@ -1,4 +1,3 @@
-
 export interface RadioStation {
   id: string;
   name: string;
@@ -9,6 +8,7 @@ export interface RadioStation {
   tags: string[];
   votes: number;
   clickCount: number;
+  homepage?: string; // Added homepage property as optional
 }
 
 export interface CountryInfo {
