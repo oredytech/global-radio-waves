@@ -90,25 +90,22 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
   }, [audioRef.current]);
   
   const loadStation = (station: RadioStation) => {
-    console.log("Request to load station:", station.name);
+    console.log("Request to load station:", station.name, station.id);
     
-    // Check if it's a different station or first load
-    const isNewStation = !currentStation || station.id !== currentStation.id;
-    
-    // Always update the current station in state
+    // Always update the current station in state first
     setCurrentStation(station);
     
-    if (isNewStation) {
-      console.log("Loading new station:", station.name);
-      handleLoadStation(station);
-    } else {
-      console.log("Same station, toggling play/pause:", station.name);
-      togglePlayPause();
-    }
+    // Now load the station's audio
+    console.log("Loading station:", station.name, station.id);
+    handleLoadStation(station);
   };
   
   const togglePlayPause = () => {
     console.log("Toggle play/pause for current station");
+    if (!currentStation) {
+      console.warn("Attempt to toggle play/pause but no station is selected");
+      return;
+    }
     handleTogglePlayPause(currentStation);
   };
   

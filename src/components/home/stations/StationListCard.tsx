@@ -1,11 +1,12 @@
 
 import React from "react";
-import { Play } from "lucide-react";
+import { Play, Pause, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioStation } from "@/services/radioService";
 import { useNavigate } from "react-router-dom";
 import { generateSlug } from "@/lib/utils";
+import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 
 interface StationListCardProps {
   station: RadioStation;
@@ -13,11 +14,26 @@ interface StationListCardProps {
 
 const StationListCard: React.FC<StationListCardProps> = ({ station }) => {
   const navigate = useNavigate();
+  const { loadStation, currentStation, isPlaying, isLoading, togglePlayPause } = useAudioPlayer();
+
+  const isCurrentStation = currentStation?.id === station.id;
+  const isThisStationPlaying = isCurrentStation && isPlaying;
+  const isThisStationLoading = isLoading && isCurrentStation;
 
   const handleStationClick = (e: React.MouseEvent) => {
     e.preventDefault();
     const stationSlug = generateSlug(station.name);
     navigate(`/station/${stationSlug}`);
+  };
+
+  const handlePlayClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (isCurrentStation) {
+      togglePlayPause();
+    } else {
+      loadStation(station);
+    }
   };
 
   return (
@@ -44,12 +60,16 @@ const StationListCard: React.FC<StationListCardProps> = ({ station }) => {
           <Button 
             size="sm"
             className="rounded-full w-9 h-9 p-0 bg-gowera-highlight hover:bg-gowera-highlight/80"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleStationClick(e);
-            }}
+            onClick={handlePlayClick}
+            disabled={isThisStationLoading}
           >
-            <Play size={16} />
+            {isThisStationLoading ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : isThisStationPlaying ? (
+              <Pause size={16} />
+            ) : (
+              <Play size={16} />
+            )}
           </Button>
         </div>
       </CardContent>

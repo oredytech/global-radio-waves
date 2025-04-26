@@ -20,7 +20,9 @@ export const useStationLoader = (
       return;
     }
 
+    // Check if the current station matches the slug
     if (currentStation && generateSlug(currentStation.name) === stationSlug) {
+      console.log("useStationLoader: Using current station:", currentStation.name);
       setStation(currentStation);
       setIsLoading(false);
       return;
@@ -29,6 +31,7 @@ export const useStationLoader = (
     const loadStationData = async () => {
       try {
         setIsLoading(true);
+        console.log("useStationLoader: Trying to find station for slug:", stationSlug);
         const savedStations = localStorage.getItem("allRadioStations");
         
         if (savedStations) {
@@ -36,6 +39,7 @@ export const useStationLoader = (
           const foundStation = findStationBySlug(stations, stationSlug);
 
           if (foundStation) {
+            console.log("useStationLoader: Found station in localStorage:", foundStation.name);
             setStation(foundStation);
             setIsLoading(false);
             return;
@@ -43,14 +47,17 @@ export const useStationLoader = (
         }
 
         // If not found in localStorage, fetch from API
+        console.log("useStationLoader: Fetching station from API for slug:", stationSlug);
         const response = await fetch(
           `https://de1.api.radio-browser.info/json/stations/byname/${stationSlug.replace(/-/g, " ")}?limit=5`
         );
         const data = await response.json();
 
         if (data && data.length > 0) {
+          console.log("useStationLoader: Found station from API:", data[0].name);
           setStation(data[0]);
         } else {
+          console.error("useStationLoader: Station not found for slug:", stationSlug);
           toast.error("Station non trouvée");
           navigate("/");
         }

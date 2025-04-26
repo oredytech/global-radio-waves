@@ -24,58 +24,67 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
     setTimeout(() => {
       if (!audioRef.current) return;
       
-      // Set the new source
-      audioRef.current.src = station.url;
-      
-      // Force reload with the new source
       try {
+        // Set the new source
+        audioRef.current.src = station.url;
+        console.log("Set audio source to:", station.url);
+        
+        // Force reload with the new source
         audioRef.current.load();
+        console.log("Reloaded audio element");
+        
+        // Now play the new station
+        console.log("Playing new station:", station.name);
+        const playPromise = audioRef.current.play();
+        
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log("Playback started successfully for:", station.name);
+              setIsPlaying(true);
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              console.error("Error playing audio:", error, "for station:", station.name);
+              setIsLoading(false);
+              setIsPlaying(false);
+              toast.error("Impossible de lire cette station. Essayez-en une autre.");
+            });
+        } else {
+          console.log("Play promise was undefined for station:", station.name);
+          setIsLoading(false);
+        }
       } catch (e) {
-        console.error("Error during load:", e);
+        console.error("Error during load/play setup:", e);
         setIsLoading(false);
         setIsPlaying(false);
         toast.error("Problème lors du chargement de la station");
-        return;
-      }
-      
-      // Now play the new station
-      console.log("Playing new station:", station.name);
-      const playPromise = audioRef.current.play();
-      
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            console.log("Playback started successfully");
-            setIsPlaying(true);
-            setIsLoading(false);
-          })
-          .catch((error) => {
-            console.error("Error playing audio:", error);
-            setIsLoading(false);
-            setIsPlaying(false);
-            toast.error("Impossible de lire cette station. Essayez-en une autre.");
-          });
-      } else {
-        console.log("Play promise was undefined");
-        setIsLoading(false);
       }
     }, 100); // Small delay to ensure clean transition
   };
   
   const togglePlayPause = (currentStation: RadioStation | null) => {
-    if (!audioRef.current || !currentStation) return;
+    if (!audioRef.current || !currentStation) {
+      console.error("Cannot toggle play/pause: Missing audio element or current station");
+      return;
+    }
+    
+    console.log("Toggle play/pause for station:", currentStation.name);
     
     if (audioRef.current.paused) {
       setIsLoading(true);
       
       // If source is empty or has changed, set it
-      if (!audioRef.current.src || audioRef.current.src === '') {
-        console.log("Source was empty, setting to:", currentStation.url);
+      if (!audioRef.current.src || audioRef.current.src === '' || !audioRef.current.src.includes(currentStation.url)) {
+        console.log("Audio source needs update, current:", audioRef.current.src, "setting to:", currentStation.url);
         audioRef.current.src = currentStation.url;
         try {
           audioRef.current.load();
+          console.log("Reloaded audio with new source");
         } catch (e) {
           console.error("Error loading audio:", e);
+          setIsLoading(false);
+          return;
         }
       }
       
@@ -85,22 +94,22 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
-            console.log("Playback resumed successfully");
+            console.log("Playback resumed successfully for:", currentStation.name);
             setIsPlaying(true);
             setIsLoading(false);
           })
           .catch((error) => {
-            console.error("Error playing audio:", error);
+            console.error("Error playing audio:", error, "for station:", currentStation.name);
             setIsLoading(false);
             setIsPlaying(false);
             toast.error("Problème lors de la lecture. Veuillez réessayer.");
           });
       } else {
-        console.log("Play promise was undefined on resume");
+        console.log("Play promise was undefined on resume for station:", currentStation.name);
         setIsLoading(false);
       }
     } else {
-      console.log("Pausing playback");
+      console.log("Pausing playback for station:", currentStation.name);
       audioRef.current.pause();
       setIsPlaying(false);
     }

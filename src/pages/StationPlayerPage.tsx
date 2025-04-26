@@ -38,6 +38,7 @@ const StationPlayerPage: React.FC = () => {
   // When station is loaded, ensure it's also loaded in the player
   useEffect(() => {
     if (station && (!currentStation || currentStation.id !== station.id)) {
+      console.log("StationPlayerPage: Loading station into player:", station.name, station.id);
       loadStation(station);
     }
   }, [station, currentStation, loadStation]);
@@ -68,7 +69,14 @@ const StationPlayerPage: React.FC = () => {
   const countryFlag = station.country ? getCountryFlag(station.country.substring(0, 2)) : "🌍";
 
   const handlePlayPause = () => {
-    togglePlayPause();
+    console.log("StationPlayerPage: Play/pause button clicked for station:", station.name);
+    if (currentStation?.id !== station.id) {
+      console.log("StationPlayerPage: Loading station for play:", station.name);
+      loadStation(station);
+    } else {
+      console.log("StationPlayerPage: Toggling play/pause for current station:", station.name);
+      togglePlayPause();
+    }
   };
 
   return (
@@ -88,7 +96,7 @@ const StationPlayerPage: React.FC = () => {
         <StationHeader 
           station={station}
           stationImage={stationImage}
-          isPlaying={isPlaying}
+          isPlaying={isPlaying && currentStation?.id === station.id}
           countryFlag={countryFlag}
           localTime={localTime}
           stationTags={stationTags}
@@ -96,8 +104,8 @@ const StationPlayerPage: React.FC = () => {
         
         <StationPlayerControls 
           station={station}
-          isPlaying={isPlaying}
-          playerLoading={playerLoading}
+          isPlaying={isPlaying && currentStation?.id === station.id}
+          playerLoading={playerLoading && currentStation?.id === station.id}
           volume={volume}
           setVolume={setVolume}
           handlePlayPause={handlePlayPause}

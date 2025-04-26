@@ -6,6 +6,7 @@ import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
+import { generateSlug } from "@/lib/utils";
 
 interface RadioCardProps {
   station: RadioStation;
@@ -17,14 +18,8 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
   const navigate = useNavigate();
   
   const isCurrentStation = currentStation?.id === station.id;
+  const isThisStationPlaying = isCurrentStation && isPlaying;
   const isThisStationLoading = isLoading && isCurrentStation;
-  
-  const generateSlug = (name: string) => {
-    return name
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-');
-  };
   
   const stationSlug = generateSlug(station.name);
   
@@ -70,14 +65,14 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
           <Button
             className={cn(
               "size-12 rounded-full p-0 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300",
-              isCurrentStation && isPlaying ? "bg-gowera-highlight text-black" : "bg-gowera-highlight text-black"
+              isThisStationPlaying ? "bg-gowera-highlight text-black" : "bg-gowera-highlight text-black"
             )}
             onClick={handlePlayClick}
             disabled={isThisStationLoading}
           >
             {isThisStationLoading ? (
               <Loader2 className="m-auto animate-spin" />
-            ) : isCurrentStation && isPlaying ? (
+            ) : isThisStationPlaying ? (
               <Pause className="m-auto" />
             ) : (
               <Play className="m-auto" />

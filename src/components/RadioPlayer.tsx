@@ -1,12 +1,14 @@
 
 import React, { useEffect, useRef } from "react";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
-import { Play, Pause, Volume2, VolumeX, Loader2, Heart, HeartOff } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Loader2, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useNavigate } from "react-router-dom";
+import { generateSlug } from "@/lib/utils";
 
 const RadioPlayer: React.FC = () => {
   const {
@@ -20,6 +22,7 @@ const RadioPlayer: React.FC = () => {
   
   const playerRef = useRef<HTMLDivElement>(null);
   const { toggleFavorite, isFavorite } = useFavorites();
+  const navigate = useNavigate();
   
   useEffect(() => {
     // Ensure player stays at bottom of screen, above navbar
@@ -47,6 +50,12 @@ const RadioPlayer: React.FC = () => {
     }
   };
 
+  const handleStationClick = () => {
+    if (!currentStation) return;
+    const stationSlug = generateSlug(currentStation.name);
+    navigate(`/station/${stationSlug}`);
+  };
+
   const defaultImage = "https://placehold.co/60x60/333/888?text=Radio";
   const stationImage = currentStation.favicon || defaultImage;
   const isMuted = volume === 0;
@@ -68,12 +77,13 @@ const RadioPlayer: React.FC = () => {
               <img 
                 src={stationImage} 
                 alt={currentStation.name} 
-                className="h-14 w-14 rounded-md object-cover" 
+                className="h-14 w-14 rounded-md object-cover cursor-pointer" 
+                onClick={handleStationClick}
                 onError={e => {
                   (e.target as HTMLImageElement).src = defaultImage;
                 }} 
               />
-              <div className="overflow-hidden ml-3">
+              <div className="overflow-hidden ml-3 cursor-pointer" onClick={handleStationClick}>
                 <h3 className="font-medium text-white truncate">{currentStation.name}</h3>
                 <p className="text-xs text-gray-400 truncate">{currentStation.country || "Radio mondiale"}</p>
               </div>
