@@ -4,14 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import { RadioStation } from "@/services/radioService";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fetchStationsByCountry, fetchStationsByTag } from "@/services/stationsService";
 import StationDetailsCard from "@/components/station/StationDetailsCard";
 import StationMetadata from "@/components/station/StationMetadata";
 import SimilarStationsCarousel from "@/components/station/SimilarStationsCarousel";
 import { useFavorites } from "@/hooks/useFavorites";
-import { findStationBySlug, getCountryFlag } from "@/utils/stationUtils";
+import { findStationBySlug, getCountryFlag, generateSlug } from "@/utils/stationUtils";
 import StationPlayerControls from "@/components/station/StationPlayerControls";
 import StationHeader from "@/components/station/StationHeader";
 
@@ -31,7 +31,7 @@ const StationPlayerPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { favorites, toggleFavorite, isFavorite } = useFavorites();
   const [localTime, setLocalTime] = useState<string>("");
-  
+
   // Fetch similar stations by country
   const { data: similarByCountry = [] } = useQuery({
     queryKey: ["stations", "country", station?.country],
