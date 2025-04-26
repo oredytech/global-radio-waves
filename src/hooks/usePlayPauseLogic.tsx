@@ -21,29 +21,38 @@ export const usePlayPauseLogic = ({ audioRef, setIsLoading, setIsPlaying }: UseP
     // Clear the current source
     audioRef.current.src = "";
     
-    // Small timeout to ensure proper state transitions
-    setTimeout(() => {
-      if (audioRef.current) {
-        // Set the new source
-        audioRef.current.src = station.url;
-        audioRef.current.load();
-        
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              setIsPlaying(true);
-              setIsLoading(false);
-            })
-            .catch((error) => {
-              console.error("Error playing audio:", error);
-              setIsLoading(false);
-              setIsPlaying(false);
-              toast.error("Could not play this station. Please try another one.");
-            });
-        }
-      }
-    }, 100);
+    // Ensure the browser knows we're changing the source
+    try {
+      audioRef.current.load();
+    } catch (e) {
+      console.log("Error during load:", e);
+    }
+    
+    // Set the new source
+    audioRef.current.src = station.url;
+    
+    // Force reload with the new source
+    try {
+      audioRef.current.load();
+    } catch (e) {
+      console.log("Error during second load:", e);
+    }
+    
+    // Now play the new station
+    const playPromise = audioRef.current.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          setIsPlaying(true);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error playing audio:", error);
+          setIsLoading(false);
+          setIsPlaying(false);
+          toast.error("Could not play this station. Please try another one.");
+        });
+    }
   };
   
   const togglePlayPause = (currentStation: RadioStation | null) => {
