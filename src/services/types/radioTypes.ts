@@ -22,12 +22,17 @@ export interface CategoryInfo {
   stationCount: number;
 }
 
+// Updated Article interface to be compatible with WordPressArticle
 export interface Article {
-  id?: string; // Added id field
+  id?: number | string;
   title: string;
-  description: string;
+  excerpt?: string; // Added from WordPressArticle
+  description?: string; // Made optional
   link: string;
-  pubDate: string;
+  date?: string; // Added from WordPressArticle
+  pubDate?: string; // Made optional
+  featured_image_url?: string; // Added from WordPressArticle
+  source?: string; // Added from WordPressArticle
   content?: string;
   image?: string;
 }

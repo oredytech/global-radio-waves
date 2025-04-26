@@ -1,26 +1,34 @@
 
 import React from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { WordPressArticle } from "@/services/newsService";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { Article } from "@/services/types/radioTypes";
 
 interface ArticleCardProps {
-  article: WordPressArticle;
+  article: Article;
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
-  const formattedDate = formatDistanceToNow(new Date(article.date), { 
+  // Use date or pubDate, whichever is available
+  const dateString = article.date || article.pubDate;
+  const formattedDate = dateString ? formatDistanceToNow(new Date(dateString), { 
     addSuffix: true,
     locale: fr
-  });
+  }) : "";
+  
+  // Use excerpt or description, whichever is available
+  const description = article.excerpt || article.description || "";
+  
+  // Use featured_image_url or image, whichever is available
+  const imageUrl = article.featured_image_url || article.image;
   
   return (
     <Card className="overflow-hidden h-full flex flex-col bg-zinc-900 border-zinc-800 hover:border-gowera-highlight/50 transition-all duration-300">
       <div className="aspect-[16/9] overflow-hidden bg-zinc-800">
         <img
-          src={article.featured_image_url}
+          src={imageUrl}
           alt={article.title}
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
           onError={(e) => {
@@ -32,7 +40,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
       <CardHeader className="p-4 pb-2 flex-grow">
         <div className="flex items-center justify-between mb-2">
           <Badge variant="outline" className="bg-gowera-surface text-xs">
-            {article.source}
+            {article.source || "News"}
           </Badge>
           <span className="text-xs text-gray-400">{formattedDate}</span>
         </div>
@@ -40,7 +48,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
           {article.title}
         </CardTitle>
         <CardDescription className="line-clamp-3 mt-1 text-gray-400">
-          {article.excerpt}
+          {description}
         </CardDescription>
       </CardHeader>
       <CardFooter className="p-4 pt-1">

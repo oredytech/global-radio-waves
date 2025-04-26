@@ -1,8 +1,7 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchAllArticles } from "@/services/newsService";
+import { fetchAllArticles, WordPressArticle } from "@/services/newsService";
 import { RadioStation } from "@/services/radioService";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { toast } from "sonner";
@@ -10,6 +9,7 @@ import StationCover from "@/components/StationCover";
 import StationHeader from "@/components/StationHeader";
 import StationMeta from "@/components/StationMeta";
 import StationArticles from "@/components/StationArticles";
+import { Article } from "@/services/types/radioTypes";
 
 // Helper functions
 const generateSlug = (name: string) =>
@@ -27,11 +27,20 @@ const StationDetail: React.FC = () => {
   const [station, setStation] = useState<RadioStation | null>(null);
   const navigate = useNavigate();
 
-  const { data: articles } = useQuery({
+  const { data: wpArticles } = useQuery({
     queryKey: ["news"],
     queryFn: () => fetchAllArticles(8),
   });
-  const recentArticles = articles?.slice(0, 8) || [];
+
+  const recentArticles: Article[] = (wpArticles || []).slice(0, 8).map((wpArticle: WordPressArticle) => ({
+    id: wpArticle.id,
+    title: wpArticle.title,
+    excerpt: wpArticle.excerpt,
+    link: wpArticle.link,
+    date: wpArticle.date,
+    featured_image_url: wpArticle.featured_image_url,
+    source: wpArticle.source
+  }));
 
   useEffect(() => {
     if (!stationId) {
@@ -39,7 +48,6 @@ const StationDetail: React.FC = () => {
       return;
     }
 
-    // If the current station matches the URL slug, use that
     if (currentStation && generateSlug(currentStation.name) === stationId) {
       setStation(currentStation);
       return;
@@ -55,7 +63,6 @@ const StationDetail: React.FC = () => {
           setStation(foundStation);
         } else {
           toast.info("Station information is being loaded...");
-          // Try fetching directly from API if not in localstorage
           fetch(
             "https://de1.api.radio-browser.info/json/stations/byname/" +
               stationId.replace(/-/g, " ") +
@@ -76,7 +83,6 @@ const StationDetail: React.FC = () => {
         }
       } else {
         toast.info("Loading station data...");
-        // Try fetching directly from API
         fetch(
           "https://de1.api.radio-browser.info/json/stations/byname/" +
             stationId.replace(/-/g, " ") +
@@ -102,7 +108,6 @@ const StationDetail: React.FC = () => {
   }, [stationId, currentStation, navigate]);
 
   useEffect(() => {
-    // If we have station data but it's not loaded in the audio player, load it
     if (station && (!currentStation || station.id !== currentStation.id)) {
       loadStation(station);
     }
@@ -115,7 +120,6 @@ const StationDetail: React.FC = () => {
           href="/"
           className="flex items-center text-gowera-highlight mb-4 hover:underline"
         >
-          {/* Consider using ArrowLeft icon here */}
           <span className="mr-2">&#8592;</span>
           Retour à l'accueil
         </a>
