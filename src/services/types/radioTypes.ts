@@ -1,4 +1,3 @@
-
 export interface RadioStation {
   id: string;
   name: string;
@@ -20,4 +19,13 @@ export interface CountryInfo {
 export interface CategoryInfo {
   name: string;
   stationCount: number;
+}
+
+export interface Article {
+  title: string;
+  description: string;
+  link: string;
+  pubDate: string;
+  content?: string;
+  image?: string;
 }

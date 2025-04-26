@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import StationGrid from "@/components/StationGrid";
 import MenuDrawer from "@/components/MenuDrawer";
@@ -18,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
+import ExplorationButtons from "@/components/ExplorationButtons";
 
 const Index = () => {
   const [stations, setStations] = useState<RadioStation[]>([]);
@@ -69,15 +69,11 @@ const Index = () => {
   }, [debouncedSearchQuery]);
 
   useEffect(() => {
-    // Fetch featured stations for homepage
     const fetchFeatured = async () => {
       setIsLoadingFeatured(true);
       try {
-        // Get a mix of popular stations from different regions
         const result = await fetchTopStations(12);
-        
         if (result && result.length > 0) {
-          // Ensure we have variety by shuffling
           const shuffled = [...result].sort(() => 0.5 - Math.random());
           setFeaturedStations(shuffled.slice(0, 6));
         }
@@ -230,26 +226,7 @@ const Index = () => {
         {/* Categories Section */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-white mb-4">Explorez par catégorie</h2>
-          <div className="grid grid-cols-3 gap-3">
-            <Card className="bg-gradient-to-br from-blue-900/80 to-blue-700/50 border-none cursor-pointer hover:opacity-90 transition-opacity">
-              <CardContent className="p-4 flex flex-col items-center">
-                <Globe className="text-white mb-2" size={24} />
-                <span className="text-sm font-medium text-white">Par pays</span>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-purple-900/80 to-purple-700/50 border-none cursor-pointer hover:opacity-90 transition-opacity">
-              <CardContent className="p-4 flex flex-col items-center">
-                <Music className="text-white mb-2" size={24} />
-                <span className="text-sm font-medium text-white">Par genre</span>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-green-900/80 to-green-700/50 border-none cursor-pointer hover:opacity-90 transition-opacity">
-              <CardContent className="p-4 flex flex-col items-center">
-                <Headphones className="text-white mb-2" size={24} />
-                <span className="text-sm font-medium text-white">Populaires</span>
-              </CardContent>
-            </Card>
-          </div>
+          <ExplorationButtons />
         </div>
 
         {/* Recent Stations */}
