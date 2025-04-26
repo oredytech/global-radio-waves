@@ -17,7 +17,8 @@ import Search from "./pages/Search";
 import Favorites from "./pages/Favorites";
 import RadioPlayer from "@/components/RadioPlayer";
 import StationDetail from "./pages/StationDetail";
-import WorldMap from "./pages/WorldMap"; // Add this import
+import WorldMap from "./pages/WorldMap";
+import StationPlayerPage from "./pages/StationPlayerPage"; // Add the new import
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,8 +47,9 @@ const App = () => {
                   <Route path="/favorites" element={<Favorites />} />
                   <Route path="/news" element={<News />} />
                   <Route path="/contact" element={<Contact />} />
-                  <Route path="/world-map" element={<WorldMap />} /> {/* Add this route */}
+                  <Route path="/world-map" element={<WorldMap />} />
                   <Route path="/station/:stationId" element={<StationDetail />} />
+                  <Route path="/station-player/:stationId" element={<StationPlayerPage />} /> {/* Add the new route */}
                   <Route path="/radio/:stationId" element={<StationDetail />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
