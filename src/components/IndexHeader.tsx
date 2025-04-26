@@ -14,4 +14,3 @@ const IndexHeader: React.FC = () => {
 };
 
 export default IndexHeader;
-

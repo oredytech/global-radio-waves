@@ -47,11 +47,7 @@ const News = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background">
-      <Header 
-        searchQuery={searchQuery} 
-        setSearchQuery={setSearchQuery} 
-        onMenuClick={handleMenuClick}
-      />
+      <Header />
       
       <main className="flex-1 container px-4 py-6 md:px-6">
         <h2 className="text-2xl font-bold mb-6 text-white">

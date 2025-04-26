@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Search, Map, List } from "lucide-react";
@@ -62,11 +61,7 @@ const WorldMap: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background pb-20">
-      <IndexHeader 
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        onMenuClick={() => setShowDrawer(true)}
-      />
+      <IndexHeader />
       
       <main className="flex-1 container px-4 py-6 md:px-6">
         <div className="flex flex-col gap-6">

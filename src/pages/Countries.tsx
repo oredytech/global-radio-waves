@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import RadioPlayer from "@/components/RadioPlayer";
@@ -25,7 +24,6 @@ const Countries: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Extract country from URL query parameters
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const country = queryParams.get('country');
@@ -68,7 +66,6 @@ const Countries: React.FC = () => {
       )
     : stations;
     
-  // Sort stations based on sortOrder
   const sortedStations = [...filteredStations].sort((a, b) => {
     switch (sortOrder) {
       case "popular":
@@ -82,11 +79,7 @@ const Countries: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800/90 via-zinc-900 to-gowera-background">
-      <IndexHeader
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        onMenuClick={handleMenuClick}
-      />
+      <IndexHeader />
       
       <main className="flex-1 container px-4 py-6 md:px-6">
         <div className="mb-8 flex items-center gap-4">
