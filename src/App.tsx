@@ -38,7 +38,7 @@ const App = () => {
           <TooltipProvider>
             <Toaster />
             <Sonner />
-            <div className="flex flex-col min-h-screen bg-gowera-background">
+            <div className="flex flex-col min-h-screen bg-gowera-background overflow-x-hidden">
               <main className="flex-grow">
                 <Routes>
                   <Route path="/" element={<Index />} />
@@ -55,7 +55,9 @@ const App = () => {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
-              <Footer />
+              <div className="pb-40">
+                <Footer />
+              </div>
               <RadioPlayer />
               <NavBar />
             </div>

@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
@@ -81,7 +80,7 @@ const StationPlayerPage: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen pb-32 pt-4">
+    <div className="relative min-h-screen pb-56 pt-4">
       <div 
         className="fixed inset-0 z-0 opacity-20 bg-cover bg-center blur-xl"
         style={{ 
@@ -93,7 +92,7 @@ const StationPlayerPage: React.FC = () => {
       
       <div className="fixed inset-0 z-0 bg-gradient-to-b from-black/80 via-gowera-background/90 to-gowera-background" />
       
-      <div className="container mx-auto px-3 sm:px-4 relative z-10 pt-6 pb-20 max-w-full overflow-hidden">
+      <div className="container mx-auto px-3 sm:px-4 relative z-10 pt-6 pb-32 max-w-full overflow-hidden">
         <Header />
         
         <StationHeader 
@@ -133,7 +132,7 @@ const StationPlayerPage: React.FC = () => {
           </div>
         </div>
         
-        <div className="mt-8 lg:mt-12 text-center">
+        <div className="mt-8 lg:mt-12 text-center pb-10">
           <blockquote className="italic text-lg text-gray-400 max-w-2xl mx-auto px-4">
             "Chaque fréquence est un battement du cœur du monde."
           </blockquote>
