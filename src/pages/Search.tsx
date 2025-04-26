@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { RadioStation, searchStations } from "@/services/radioService";
 import { useDebounce } from "@/hooks/useDebounce";
 import StationGrid from "@/components/StationGrid";
+import Header from "@/components/Header";
 
 const Search = () => {
   const [query, setQuery] = useState("");
@@ -35,6 +36,7 @@ const Search = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gowera-background pb-24">
+      <Header />
       <main className="flex-1 container px-4 py-6 md:px-6">
         <div className="mb-8">
           <div className="relative">

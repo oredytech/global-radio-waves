@@ -10,6 +10,7 @@ import TrendingStations from "@/components/home/TrendingStations";
 import RecentlyPlayed from "@/components/home/RecentlyPlayed";
 import PopularStations from "@/components/home/PopularStations";
 import ExplorationButtons from "@/components/ExplorationButtons";
+import Header from "@/components/Header";
 
 const Index = () => {
   const [stations, setStations] = useState<RadioStation[]>([]);
@@ -75,6 +76,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gowera-background pb-20">
+      <Header />
       <main className="flex-1 px-4 pt-4 pb-6">
         <SearchSection searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <RandomListenSection />

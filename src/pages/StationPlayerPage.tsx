@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
@@ -15,6 +14,7 @@ import { useStationLoader } from "@/hooks/useStationLoader";
 import { useSimilarStations } from "@/hooks/useSimilarStations";
 import { useLocalTime } from "@/hooks/useLocalTime";
 import { useNavigate } from "react-router-dom";
+import Header from "@/components/Header";
 
 const StationPlayerPage: React.FC = () => {
   const { stationSlug } = useParams<{ stationSlug: string }>();
@@ -30,12 +30,10 @@ const StationPlayerPage: React.FC = () => {
   } = useAudioPlayer();
   const { favorites, toggleFavorite, isFavorite } = useFavorites();
 
-  // Use our custom hooks
   const { station, isLoading } = useStationLoader(stationSlug, currentStation, loadStation);
   const similarStations = useSimilarStations(station);
   const localTime = useLocalTime(station);
-  
-  // When station is loaded, ensure it's also loaded in the player
+
   useEffect(() => {
     if (station && (!currentStation || currentStation.id !== station.id)) {
       console.log("StationPlayerPage: Loading station into player:", station.name, station.id);
@@ -93,6 +91,8 @@ const StationPlayerPage: React.FC = () => {
       <div className="fixed inset-0 z-0 bg-gradient-to-b from-black/80 via-gowera-background/90 to-gowera-background" />
       
       <div className="container mx-auto px-4 relative z-10 pt-6 pb-20">
+        <Header />
+        
         <StationHeader 
           station={station}
           stationImage={stationImage}

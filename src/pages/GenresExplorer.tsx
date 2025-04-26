@@ -1,14 +1,12 @@
-
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Shuffle } from "lucide-react";
 import { fetchCategories } from "@/services/metadataService";
-import GenreCard from "@/components/genres/GenreCard";
-import { CategoryInfo } from "@/services/types/radioTypes";
 import GenresGrid from "@/components/genres/GenresGrid";
 import GenresHeader from "@/components/genres/GenresHeader";
+import Header from "@/components/Header";
 
 const GenresExplorer = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,14 +32,13 @@ const GenresExplorer = () => {
     if (filteredGenres.length > 0) {
       const randomIndex = Math.floor(Math.random() * filteredGenres.length);
       const randomGenre = filteredGenres[randomIndex];
-      // Navigate to the genre's stations
       window.location.href = `/stations/genre/${randomGenre.name}`;
     }
   };
 
   return (
     <div className="container mx-auto px-4 pt-16 pb-32">
-      <GenresHeader />
+      <Header />
       
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
         <div className="relative flex-1 max-w-md w-full">
