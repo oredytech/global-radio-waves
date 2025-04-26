@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Search, Map, List, Filter } from "lucide-react";
@@ -11,9 +10,14 @@ import { CountryInfo, fetchCountries } from "@/services/radioService";
 import CountryCard from "@/components/world/CountryCard";
 import CountryList from "@/components/world/CountryList";
 import IndexHeader from "@/components/IndexHeader";
-import { RadioPlayer } from "@/components/RadioPlayer";
+import RadioPlayer from "@/components/RadioPlayer";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { toast } from "sonner";
+
+// Extended CountryInfo type to include continent
+interface ExtendedCountryInfo extends CountryInfo {
+  continent?: string;
+}
 
 const continents = [
   { name: "Tous", value: "all" },
@@ -84,8 +88,8 @@ const getContinentColor = (continent: string): string => {
 };
 
 const WorldMap: React.FC = () => {
-  const [countries, setCountries] = useState<CountryInfo[]>([]);
-  const [filteredCountries, setFilteredCountries] = useState<CountryInfo[]>([]);
+  const [countries, setCountries] = useState<ExtendedCountryInfo[]>([]);
+  const [filteredCountries, setFilteredCountries] = useState<ExtendedCountryInfo[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [selectedContinent, setSelectedContinent] = useState("all");
@@ -141,7 +145,7 @@ const WorldMap: React.FC = () => {
     setFilteredCountries(result);
   }, [debouncedSearchQuery, countries, selectedContinent]);
   
-  const handleCountryClick = (country: CountryInfo) => {
+  const handleCountryClick = (country: ExtendedCountryInfo) => {
     navigate(`/countries?country=${encodeURIComponent(country.name)}`);
   };
   

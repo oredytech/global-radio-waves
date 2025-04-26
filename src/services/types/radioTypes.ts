@@ -15,6 +15,7 @@ export interface CountryInfo {
   name: string;
   code: string;
   stationCount: number;
+  continent?: string; // Added the continent property
 }
 
 export interface CategoryInfo {
