@@ -17,6 +17,7 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
   const [imageError, setImageError] = useState(false);
   const navigate = useNavigate();
   
+  // Check if this specific card's station is the one currently playing
   const isCurrentStation = currentStation?.id === station.id;
   const isThisStationPlaying = isCurrentStation && isPlaying;
   const isThisStationLoading = isLoading && isCurrentStation;

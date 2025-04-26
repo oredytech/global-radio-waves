@@ -54,8 +54,12 @@ export const useStationLoader = (
         const data = await response.json();
 
         if (data && data.length > 0) {
-          console.log("useStationLoader: Found station from API:", data[0].name);
-          setStation(data[0]);
+          const matchingStation = data.find(
+            (s: any) => generateSlug(s.name) === stationSlug
+          ) || data[0];
+          
+          console.log("useStationLoader: Found station from API:", matchingStation.name);
+          setStation(matchingStation);
         } else {
           console.error("useStationLoader: Station not found for slug:", stationSlug);
           toast.error("Station non trouvée");
@@ -71,7 +75,7 @@ export const useStationLoader = (
     };
 
     loadStationData();
-  }, [stationSlug, currentStation, navigate]);
+  }, [stationSlug, currentStation, navigate, loadStation]);
 
   return { station, isLoading };
 };

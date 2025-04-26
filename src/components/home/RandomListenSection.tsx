@@ -7,7 +7,6 @@ import { fetchTopStations } from "@/services/radioService";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 
 const RandomListenSection = () => {
-  // Safely access the AudioPlayer context with error handling
   let audioPlayerContext;
   try {
     audioPlayerContext = useAudioPlayer();
@@ -40,8 +39,10 @@ const RandomListenSection = () => {
       if (randomStations && randomStations.length > 0) {
         const randomIndex = Math.floor(Math.random() * randomStations.length);
         const randomStation = randomStations[randomIndex];
+        
+        console.log("Playing random station:", randomStation.name, randomStation.id);
         loadStation(randomStation);
-        toast.success("Lecture d'une station aléatoire");
+        toast.success(`Lecture de ${randomStation.name}`);
       }
     } catch (error) {
       console.error("Error playing random station:", error);

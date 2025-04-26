@@ -56,6 +56,11 @@ const RadioPlayer: React.FC = () => {
     navigate(`/station/${stationSlug}`);
   };
 
+  const handlePlayPause = () => {
+    console.log("RadioPlayer: Toggle play/pause for current station:", currentStation?.name);
+    togglePlayPause();
+  };
+
   const defaultImage = "https://placehold.co/60x60/333/888?text=Radio";
   const stationImage = currentStation.favicon || defaultImage;
   const isMuted = volume === 0;
@@ -96,7 +101,7 @@ const RadioPlayer: React.FC = () => {
               variant="ghost" 
               size="icon" 
               className="rounded-full hover:bg-white/10 text-white flex items-center justify-center" 
-              onClick={togglePlayPause} 
+              onClick={handlePlayPause}
               disabled={isLoading}
               aria-label={isPlaying ? "Pause" : "Play"}
             >
