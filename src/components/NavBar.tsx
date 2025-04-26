@@ -1,7 +1,7 @@
 
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Home, Headphones, Globe, Music, Heart, Search } from "lucide-react";
+import { Home, Headphones, Globe, Music, Heart, Search, Map } from "lucide-react";
 
 const NavBar: React.FC = () => {
   return (
@@ -32,14 +32,14 @@ const NavBar: React.FC = () => {
       </NavLink>
 
       <NavLink
-        to="/countries"
+        to="/world-map"
         className={({ isActive }) =>
           `flex flex-col items-center justify-center ${
             isActive ? "text-gowera-highlight" : "text-gray-500"
           }`
         }
       >
-        <Globe size={20} />
+        <Map size={20} />
         <span className="bottom-nav-label">Pays</span>
       </NavLink>
 
