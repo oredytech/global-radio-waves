@@ -93,7 +93,7 @@ const StationPlayerPage: React.FC = () => {
       
       <div className="fixed inset-0 z-0 bg-gradient-to-b from-black/80 via-gowera-background/90 to-gowera-background" />
       
-      <div className="container mx-auto px-4 relative z-10 pt-6 pb-20">
+      <div className="container mx-auto px-3 sm:px-4 relative z-10 pt-6 pb-20 max-w-full overflow-hidden">
         <Header />
         
         <StationHeader 
@@ -116,11 +116,11 @@ const StationPlayerPage: React.FC = () => {
           toggleFavorite={() => toggleFavorite(station)}
         />
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
           <div className="lg:col-span-2">
             <StationDetailsCard station={station} />
             
-            <div className="mt-8">
+            <div className="mt-6 lg:mt-8">
               <h2 className="text-xl font-bold text-white mb-4">
                 Vibrations similaires
               </h2>
@@ -133,8 +133,8 @@ const StationPlayerPage: React.FC = () => {
           </div>
         </div>
         
-        <div className="mt-12 text-center">
-          <blockquote className="italic text-lg text-gray-400 max-w-2xl mx-auto">
+        <div className="mt-8 lg:mt-12 text-center">
+          <blockquote className="italic text-lg text-gray-400 max-w-2xl mx-auto px-4">
             "Chaque fréquence est un battement du cœur du monde."
           </blockquote>
         </div>
