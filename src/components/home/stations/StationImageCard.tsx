@@ -1,6 +1,6 @@
 
 import React from "react";
-import { RadioStation } from "@/services/radioTypes";
+import { RadioStation } from "@/services/radioService";
 
 interface StationImageCardProps {
   station: RadioStation;
