@@ -1,4 +1,5 @@
 
+import { useMemo } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { RadioStation } from "@/services/radioService";
 import { fetchStationsByCountry, fetchStationsByTag } from "@/services/stationsService";
@@ -19,7 +20,7 @@ export const useSimilarStations = (station: RadioStation | null) => {
   });
 
   // Filter out current station from similar stations and combine results
-  const similarStations = React.useMemo(() => {
+  const similarStations = useMemo(() => {
     if (!station) return [];
     
     const combined = [...similarByCountry, ...similarByTag]

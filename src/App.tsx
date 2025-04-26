@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,9 +16,8 @@ import Index from "./pages/Index";
 import Search from "./pages/Search";
 import Favorites from "./pages/Favorites";
 import RadioPlayer from "@/components/RadioPlayer";
-import StationDetail from "./pages/StationDetail";
-import WorldMap from "./pages/WorldMap";
 import StationPlayerPage from "./pages/StationPlayerPage";
+import WorldMap from "./pages/WorldMap";
 import GenresExplorer from "./pages/GenresExplorer";
 
 const queryClient = new QueryClient({
@@ -48,11 +48,9 @@ const App = () => {
                   <Route path="/news" element={<News />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/world-map" element={<WorldMap />} />
-                  <Route path="/station/:stationId" element={<StationDetail />} />
                   <Route path="/station-player/:stationId" element={<StationPlayerPage />} />
-                  <Route path="/radio/:stationId" element={<StationDetail />} />
                   <Route path="/genres" element={<GenresExplorer />} />
-                  <Route path="/stations/genre/:genreName" element={<StationDetail />} />
+                  <Route path="/stations/genre/:genreName" element={<Categories />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
