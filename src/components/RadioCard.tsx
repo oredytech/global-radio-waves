@@ -13,14 +13,13 @@ interface RadioCardProps {
 }
 
 const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
-  const { loadStation, currentStation, isPlaying, isLoading, togglePlayPause } = useAudioPlayer();
+  const { loadStation, currentStation, togglePlayPause, isStationPlaying, isStationLoading } = useAudioPlayer();
   const [imageError, setImageError] = useState(false);
   const navigate = useNavigate();
   
-  // Check if this specific card's station is the one currently playing
-  const isCurrentStation = currentStation?.id === station.id;
-  const isThisStationPlaying = isCurrentStation && isPlaying;
-  const isThisStationLoading = isLoading && isCurrentStation;
+  // Use the helper functions to check this specific station's status
+  const isThisStationPlaying = isStationPlaying(station.id);
+  const isThisStationLoading = isStationLoading(station.id);
   
   const stationSlug = generateSlug(station.name);
   
@@ -28,7 +27,7 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
     e.preventDefault();
     e.stopPropagation();
     
-    if (isCurrentStation) {
+    if (currentStation?.id === station.id) {
       togglePlayPause();
     } else {
       loadStation(station);
@@ -47,7 +46,7 @@ const RadioCard: React.FC<RadioCardProps> = ({ station }) => {
       onClick={handleCardClick}
       className={cn(
         "radio-card flex flex-col h-48 cursor-pointer transition-all duration-300 group",
-        isCurrentStation && "radio-playing",
+        isThisStationPlaying && "radio-playing",
       )}
       data-station-id={station.id}
     >

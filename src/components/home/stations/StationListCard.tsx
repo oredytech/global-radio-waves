@@ -14,11 +14,10 @@ interface StationListCardProps {
 
 const StationListCard: React.FC<StationListCardProps> = ({ station }) => {
   const navigate = useNavigate();
-  const { loadStation, currentStation, isPlaying, isLoading, togglePlayPause } = useAudioPlayer();
+  const { loadStation, currentStation, togglePlayPause, isStationPlaying, isStationLoading } = useAudioPlayer();
 
-  const isCurrentStation = currentStation?.id === station.id;
-  const isThisStationPlaying = isCurrentStation && isPlaying;
-  const isThisStationLoading = isLoading && isCurrentStation;
+  const isThisStationPlaying = isStationPlaying(station.id);
+  const isThisStationLoading = isStationLoading(station.id);
 
   const handleStationClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -29,7 +28,7 @@ const StationListCard: React.FC<StationListCardProps> = ({ station }) => {
   const handlePlayClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    if (isCurrentStation) {
+    if (currentStation?.id === station.id) {
       togglePlayPause();
     } else {
       loadStation(station);

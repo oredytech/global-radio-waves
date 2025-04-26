@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
@@ -21,12 +22,12 @@ const StationPlayerPage: React.FC = () => {
   const navigate = useNavigate();
   const { 
     currentStation, 
-    isPlaying, 
+    isStationPlaying,
+    isStationLoading,
     togglePlayPause, 
     loadStation,
     volume,
     setVolume,
-    isLoading: playerLoading 
   } = useAudioPlayer();
   const { favorites, toggleFavorite, isFavorite } = useFavorites();
 
@@ -65,6 +66,8 @@ const StationPlayerPage: React.FC = () => {
                      (station.tags ? (typeof station.tags === 'string' ? [station.tags] : []) : []);
   const isStationFavorite = isFavorite(station.id);
   const countryFlag = station.country ? getCountryFlag(station.country.substring(0, 2)) : "🌍";
+  const isCurrentStationPlaying = isStationPlaying(station.id);
+  const isCurrentStationLoading = isStationLoading(station.id);
 
   const handlePlayPause = () => {
     console.log("StationPlayerPage: Play/pause button clicked for station:", station.name);
@@ -96,7 +99,7 @@ const StationPlayerPage: React.FC = () => {
         <StationHeader 
           station={station}
           stationImage={stationImage}
-          isPlaying={isPlaying && currentStation?.id === station.id}
+          isPlaying={isCurrentStationPlaying}
           countryFlag={countryFlag}
           localTime={localTime}
           stationTags={stationTags}
@@ -104,8 +107,8 @@ const StationPlayerPage: React.FC = () => {
         
         <StationPlayerControls 
           station={station}
-          isPlaying={isPlaying && currentStation?.id === station.id}
-          playerLoading={playerLoading && currentStation?.id === station.id}
+          isPlaying={isCurrentStationPlaying}
+          playerLoading={isCurrentStationLoading}
           volume={volume}
           setVolume={setVolume}
           handlePlayPause={handlePlayPause}

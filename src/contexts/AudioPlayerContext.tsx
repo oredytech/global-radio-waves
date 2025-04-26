@@ -16,6 +16,8 @@ interface AudioPlayerContextType {
   togglePlayPause: () => void;
   setVolume: (volume: number) => void;
   isLoading: boolean;
+  isStationPlaying: (stationId: string) => boolean;
+  isStationLoading: (stationId: string) => boolean;
 }
 
 const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(undefined);
@@ -116,6 +118,16 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
     setVolumeState(newVolume);
   };
   
+  // Helper function to check if a specific station is playing
+  const isStationPlaying = (stationId: string) => {
+    return isPlaying && currentStation?.id === stationId;
+  };
+  
+  // Helper function to check if a specific station is loading
+  const isStationLoading = (stationId: string) => {
+    return isLoading && currentStation?.id === stationId;
+  };
+  
   return (
     <AudioPlayerContext.Provider
       value={{
@@ -126,6 +138,8 @@ export const AudioPlayerProvider: React.FC<{children: React.ReactNode}> = ({ chi
         togglePlayPause,
         setVolume,
         isLoading,
+        isStationPlaying,
+        isStationLoading,
       }}
     >
       {children}

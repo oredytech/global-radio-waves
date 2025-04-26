@@ -12,7 +12,7 @@ interface RecentlyPlayedProps {
 }
 
 const RecentlyPlayed: React.FC<RecentlyPlayedProps> = ({ stations }) => {
-  const { loadStation, currentStation, isPlaying, isLoading, togglePlayPause } = useAudioPlayer();
+  const { loadStation, currentStation, togglePlayPause, isStationPlaying, isStationLoading } = useAudioPlayer();
 
   const handlePlayStation = (station: RadioStation, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -33,9 +33,8 @@ const RecentlyPlayed: React.FC<RecentlyPlayedProps> = ({ stations }) => {
 
       <div className="flex overflow-x-auto space-x-4 pb-4 snap-x">
         {stations.slice(0, 10).map((station) => {
-          const isCurrentStation = currentStation?.id === station.id;
-          const isThisStationPlaying = isCurrentStation && isPlaying;
-          const isThisStationLoading = isLoading && isCurrentStation;
+          const isThisStationPlaying = isStationPlaying(station.id);
+          const isThisStationLoading = isStationLoading(station.id);
           
           return (
             <div 
