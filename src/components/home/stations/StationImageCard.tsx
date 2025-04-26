@@ -1,14 +1,26 @@
 
 import React from "react";
 import { RadioStation } from "@/services/radioService";
+import { useNavigate } from "react-router-dom";
+import { generateSlug } from "@/lib/utils";
 
 interface StationImageCardProps {
   station: RadioStation;
 }
 
 const StationImageCard: React.FC<StationImageCardProps> = ({ station }) => {
+  const navigate = useNavigate();
+
+  const handleStationClick = () => {
+    const stationSlug = generateSlug(station.name);
+    navigate(`/station-player/${stationSlug}`);
+  };
+
   return (
-    <div className="aspect-square bg-white/10 rounded-lg overflow-hidden relative group cursor-pointer">
+    <div 
+      className="aspect-square bg-white/10 rounded-lg overflow-hidden relative group cursor-pointer"
+      onClick={handleStationClick}
+    >
       <img 
         src={station.favicon || "https://placehold.co/100x100/333/888?text=Radio"} 
         alt={station.name}
