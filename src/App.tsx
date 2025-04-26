@@ -20,6 +20,7 @@ import StationPlayerPage from "./pages/StationPlayerPage";
 import WorldMap from "./pages/WorldMap";
 import GenresExplorer from "./pages/GenresExplorer";
 
+// Create a new QueryClient instance
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -32,11 +33,11 @@ const queryClient = new QueryClient({
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <AudioPlayerProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+      <BrowserRouter>
+        <AudioPlayerProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
             <div className="flex flex-col min-h-screen bg-gowera-background">
               <main className="flex-grow">
                 <Routes>
@@ -58,9 +59,9 @@ const App = () => {
               <RadioPlayer />
               <NavBar />
             </div>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AudioPlayerProvider>
+          </TooltipProvider>
+        </AudioPlayerProvider>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 };
