@@ -250,7 +250,9 @@ const StationPlayerPage: React.FC = () => {
 
   const defaultImage = "https://placehold.co/800x300/333/888?text=Radio";
   const stationImage = station.favicon || defaultImage;
-  const stationTags = station.tags || [];
+  // Ensure tags is always an array, even if it's a string or undefined
+  const stationTags = Array.isArray(station.tags) ? station.tags : 
+                      (station.tags ? [station.tags.toString()] : []);
   const stationLang = station.language || "Non spécifié";
   const isStationFavorite = isFavorite(station.id);
   const countryFlag = station.country ? getCountryFlag(station.country.substring(0, 2)) : "🌍";

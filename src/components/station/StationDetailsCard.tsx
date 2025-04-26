@@ -7,13 +7,17 @@ interface StationDetailsCardProps {
 }
 
 const StationDetailsCard: React.FC<StationDetailsCardProps> = ({ station }) => {
+  // Ensure tags is always an array
+  const tags = Array.isArray(station.tags) ? station.tags : 
+              (station.tags ? [station.tags.toString()] : []);
+  
   // Generate a description if not provided
   const generateDescription = () => {
-    const tags = station.tags?.join(', ') || '';
+    const tagsList = tags.join(', ') || '';
     const country = station.country || 'du monde';
     const lang = station.language || '';
     
-    return `${station.name} est une station de radio ${tags ? 'spécialisée en ' + tags : ''} diffusant depuis ${country}${lang ? ' principalement en ' + lang : ''}. Cette radio offre une expérience d'écoute unique, vous permettant de découvrir des sonorités${country !== 'du monde' ? ' de ' + country : ' internationales'}.`;
+    return `${station.name} est une station de radio ${tagsList ? 'spécialisée en ' + tagsList : ''} diffusant depuis ${country}${lang ? ' principalement en ' + lang : ''}. Cette radio offre une expérience d'écoute unique, vous permettant de découvrir des sonorités${country !== 'du monde' ? ' de ' + country : ' internationales'}.`;
   };
   
   const description = generateDescription();
@@ -31,11 +35,11 @@ const StationDetailsCard: React.FC<StationDetailsCardProps> = ({ station }) => {
         </p>
       </div>
       
-      {station.tags && station.tags.length > 0 && (
+      {tags.length > 0 && (
         <div className="mt-6">
           <h3 className="text-lg font-semibold text-white mb-2">Genres musicaux</h3>
           <div className="flex flex-wrap gap-2">
-            {station.tags.map((tag, index) => (
+            {tags.map((tag, index) => (
               <span 
                 key={index} 
                 className="px-3 py-1 bg-white/10 text-sm text-white rounded-full"
