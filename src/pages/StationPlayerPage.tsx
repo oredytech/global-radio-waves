@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { RadioStation } from "@/services/radioService";
+
+import React from "react";
+import { useParams } from "react-router-dom";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
-import { toast } from "sonner";
-import { Loader2, Globe } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { fetchStationsByCountry, fetchStationsByTag } from "@/services/stationsService";
+import { useFavorites } from "@/hooks/useFavorites";
+import { getCountryFlag } from "@/utils/stationUtils";
+import StationPlayerControls from "@/components/station/StationPlayerControls";
+import StationHeader from "@/components/station/StationHeader";
 import StationDetailsCard from "@/components/station/StationDetailsCard";
 import StationMetadata from "@/components/station/StationMetadata";
 import SimilarStationsCarousel from "@/components/station/SimilarStationsCarousel";
-import { useFavorites } from "@/hooks/useFavorites";
-import { findStationBySlug, getCountryFlag, generateSlug } from "@/utils/stationUtils";
-import StationPlayerControls from "@/components/station/StationPlayerControls";
-import StationHeader from "@/components/station/StationHeader";
+import { useStationLoader } from "@/hooks/useStationLoader";
+import { useSimilarStations } from "@/hooks/useSimilarStations";
+import { useLocalTime } from "@/hooks/useLocalTime";
+import { useNavigate } from "react-router-dom";
 
 const StationPlayerPage: React.FC = () => {
   const { stationId } = useParams<{ stationId: string }>();
@@ -27,158 +28,12 @@ const StationPlayerPage: React.FC = () => {
     setVolume,
     isLoading: playerLoading 
   } = useAudioPlayer();
-  const [station, setStation] = useState<RadioStation | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const { favorites, toggleFavorite, isFavorite } = useFavorites();
-  const [localTime, setLocalTime] = useState<string>("");
 
-  // Fetch similar stations by country
-  const { data: similarByCountry = [] } = useQuery({
-    queryKey: ["stations", "country", station?.country],
-    queryFn: () => fetchStationsByCountry(station?.country || "", 5),
-    enabled: !!station?.country,
-  });
-  
-  // Fetch similar stations by genre/tag
-  const { data: similarByTag = [] } = useQuery({
-    queryKey: ["stations", "tag", station?.tags[0]],
-    queryFn: () => fetchStationsByTag(station?.tags[0] || "", 5),
-    enabled: !!station?.tags && station.tags.length > 0,
-  });
-
-  // Filter out current station from similar stations and combine results
-  const similarStations = React.useMemo(() => {
-    if (!station) return [];
-    
-    const combined = [...similarByCountry, ...similarByTag]
-      .filter(s => s.id !== station.id)
-      .reduce((unique: RadioStation[], item) => {
-        // Remove duplicates
-        return unique.some(s => s.id === item.id) ? unique : [...unique, item];
-      }, []);
-      
-    return combined.slice(0, 5); // Limit to 5 stations
-  }, [similarByCountry, similarByTag, station]);
-
-  // Update local time of the station's country
-  useEffect(() => {
-    if (!station) return;
-    
-    const updateTime = () => {
-      try {
-        const now = new Date();
-        const formatter = new Intl.DateTimeFormat('fr-FR', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false
-        });
-        setLocalTime(formatter.format(now));
-      } catch (error) {
-        console.error("Error getting local time", error);
-      }
-    };
-    
-    updateTime();
-    const interval = setInterval(updateTime, 60000); // Update every minute
-    
-    return () => clearInterval(interval);
-  }, [station]);
-
-  useEffect(() => {
-    if (!stationId) {
-      navigate("/");
-      return;
-    }
-
-    if (currentStation && generateSlug(currentStation.name) === stationId) {
-      setStation(currentStation);
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      const savedStations = localStorage.getItem("allRadioStations");
-      if (savedStations) {
-        const stations = JSON.parse(savedStations) as RadioStation[];
-        const foundStation = findStationBySlug(stations, stationId);
-
-        if (foundStation) {
-          setStation(foundStation);
-          setIsLoading(false);
-        } else {
-          // If not found in localStorage, fetch from API
-          fetch(
-            "https://de1.api.radio-browser.info/json/stations/byname/" +
-              stationId.replace(/-/g, " ") +
-              "?limit=5"
-          )
-            .then((response) => response.json())
-            .then((data) => {
-              if (data && data.length > 0) {
-                setStation(data[0]);
-              } else {
-                toast.error("Station non trouvée");
-                navigate("/");
-              }
-              setIsLoading(false);
-            })
-            .catch((error) => {
-              console.error("Error fetching station:", error);
-              toast.error("Impossible de charger la station");
-              setIsLoading(false);
-              navigate("/");
-            });
-        }
-      } else {
-        // No saved stations, fetch from API
-        fetch(
-          "https://de1.api.radio-browser.info/json/stations/byname/" +
-            stationId.replace(/-/g, " ") +
-            "?limit=5"
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            if (data && data.length > 0) {
-              setStation(data[0]);
-            } else {
-              toast.error("Station non trouvée");
-              navigate("/");
-            }
-            setIsLoading(false);
-          })
-          .catch((error) => {
-            console.error("Error fetching station:", error);
-            toast.error("Impossible de charger la station");
-            setIsLoading(false);
-            navigate("/");
-          });
-      }
-    } catch (error) {
-      console.error("Error retrieving station:", error);
-      toast.error("Problème lors du chargement des informations");
-      setIsLoading(false);
-    }
-  }, [stationId, currentStation, navigate]);
-
-  useEffect(() => {
-    // Auto-load the station when found, but don't auto-play
-    if (station && (!currentStation || station.id !== currentStation.id)) {
-      loadStation(station);
-    }
-  }, [station, currentStation, loadStation]);
-
-  const handlePlayPause = () => {
-    if (station) {
-      togglePlayPause();
-    }
-  };
-  
-  const handleFavoriteToggle = () => {
-    if (station) {
-      toggleFavorite(station);
-    }
-  };
+  // Use our custom hooks
+  const { station, isLoading } = useStationLoader(stationId, currentStation, loadStation);
+  const similarStations = useSimilarStations(station);
+  const localTime = useLocalTime(station);
 
   if (isLoading) {
     return (
@@ -237,33 +92,28 @@ const StationPlayerPage: React.FC = () => {
           playerLoading={playerLoading}
           volume={volume}
           setVolume={setVolume}
-          handlePlayPause={handlePlayPause}
+          handlePlayPause={togglePlayPause}
           isStationFavorite={isStationFavorite}
-          toggleFavorite={handleFavoriteToggle}
+          toggleFavorite={toggleFavorite}
         />
         
-        {/* Split content into two columns on larger screens */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left column (station details) */}
           <div className="lg:col-span-2">
             <StationDetailsCard station={station} />
             
             <div className="mt-8">
-              <h2 className="text-xl font-bold text-white mb-4 flex items-center">
-                <Globe className="mr-2 h-5 w-5" /> 
+              <h2 className="text-xl font-bold text-white mb-4">
                 Vibrations similaires
               </h2>
               <SimilarStationsCarousel stations={similarStations} />
             </div>
           </div>
           
-          {/* Right column (metadata) */}
           <div className="lg:col-span-1">
             <StationMetadata station={station} />
           </div>
         </div>
         
-        {/* Inspirational quote */}
         <div className="mt-12 text-center">
           <blockquote className="italic text-lg text-gray-400 max-w-2xl mx-auto">
             "Chaque fréquence est un battement du cœur du monde."
