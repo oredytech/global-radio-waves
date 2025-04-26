@@ -10,6 +10,11 @@ export const useAudioElement = (volume: number) => {
     audioRef.current = new Audio();
     audioRef.current.volume = volume;
     audioRef.current.preload = "auto";
+    
+    // Add metadata loading handler
+    audioRef.current.addEventListener('loadedmetadata', () => {
+      console.log('Audio metadata loaded');
+    });
 
     return () => {
       if (audioRef.current) {

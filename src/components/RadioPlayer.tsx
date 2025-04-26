@@ -1,10 +1,11 @@
 
 import React, { useEffect, useRef } from "react";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
-import { Play, Pause, Volume2, VolumeX, Loader2 } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Loader2, Heart, HeartOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const RadioPlayer: React.FC = () => {
   const {
@@ -16,6 +17,7 @@ const RadioPlayer: React.FC = () => {
     setVolume
   } = useAudioPlayer();
   const playerRef = useRef<HTMLDivElement>(null);
+  const [isFavorite, setIsFavorite] = React.useState(false);
 
   useEffect(() => {
     // Ensure player stays at bottom of screen, above navbar
@@ -28,9 +30,36 @@ const RadioPlayer: React.FC = () => {
     };
   }, [currentStation]);
 
+  useEffect(() => {
+    if (currentStation) {
+      // Check if station is in favorites
+      const favorites = JSON.parse(localStorage.getItem('favoriteStations') || '[]');
+      const isInFavorites = favorites.some((fav: any) => fav.id === currentStation.id);
+      setIsFavorite(isInFavorites);
+    }
+  }, [currentStation]);
+
   if (!currentStation) {
     return null;
   }
+
+  const toggleFavorite = () => {
+    if (!currentStation) return;
+    
+    const favorites = JSON.parse(localStorage.getItem('favoriteStations') || '[]');
+    
+    if (isFavorite) {
+      const updatedFavorites = favorites.filter((station: any) => station.id !== currentStation.id);
+      localStorage.setItem('favoriteStations', JSON.stringify(updatedFavorites));
+      setIsFavorite(false);
+      toast.success("Station retirée des favoris");
+    } else {
+      favorites.push(currentStation);
+      localStorage.setItem('favoriteStations', JSON.stringify(favorites));
+      setIsFavorite(true);
+      toast.success("Station ajoutée aux favoris");
+    }
+  };
 
   const defaultImage = "https://placehold.co/60x60/333/888?text=Radio";
   const isMuted = volume === 0;
@@ -80,7 +109,20 @@ const RadioPlayer: React.FC = () => {
             </Button>
           </div>
           
-          <div className="flex items-center space-x-2 w-1/3 justify-center">
+          <div className="flex items-center space-x-2 w-1/3 justify-end">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-white/10 rounded-full h-8 w-8"
+              onClick={toggleFavorite}
+            >
+              {isFavorite ? (
+                <Heart className="h-5 w-5 fill-red-500 text-red-500" />
+              ) : (
+                <Heart className="h-5 w-5" />
+              )}
+            </Button>
+            
             <Button 
               variant="ghost" 
               size="icon" 
